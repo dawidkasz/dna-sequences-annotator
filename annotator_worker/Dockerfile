@@ -1,4 +1,4 @@
-FROM gradle:jdk17-alpine
+FROM gradle:jdk17-focal
 
 WORKDIR /app
 
