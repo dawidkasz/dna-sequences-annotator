@@ -20,7 +20,7 @@ import java.util.Properties;
 @Slf4j
 public class Main {
     static Properties createConsumerProps() {
-        String bootstrapServers = "127.0.0.1:29092";
+        String bootstrapServers = "kafka:9092";
         String groupId = "my-fourth-application";
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -33,7 +33,7 @@ public class Main {
     }
 
     static Properties createProducerProps() {
-        String bootstrapServers = "127.0.0.1:29092";
+        String bootstrapServers = "kafka:9092";
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

@@ -65,7 +65,6 @@ services:
       - kafka
     ports:
       - "8080:8080"
-    command: java -jar build/libs/annotator_core-0.0.1-SNAPSHOT.jar
 
   worker:
     build: annotator_worker
@@ -74,7 +73,6 @@ services:
       - kafka
     deploy:
       mode: replicated
-      replicas: 2
-    command: java -cp build/libs/annotator_worker-0.0.1-SNAPSHOT.jar com.annotator.Main
+      replicas: 1
 volumes:
   postgres-data:
