@@ -16,7 +16,7 @@ public class CalculationResultListener {
 
     @KafkaListener(topics = "demo_pzsp2_result", groupId = "core-annotator")
     public void listen(CalculationResult result) {
-        log.info("Received: {}", result);
+        log.warn("Received: {}", result);
         annotationRepository.save(AnnotationResult.from(result));
     }
 }
