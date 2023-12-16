@@ -20,6 +20,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("com.opencsv:opencsv:5.9")
+    implementation("com.google.guava:guava:32.1.3-jre")
     runtimeOnly("org.postgresql:postgresql")
 
     compileOnly("org.projectlombok:lombok:1.18.30")

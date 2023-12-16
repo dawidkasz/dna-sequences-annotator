@@ -1,21 +1,20 @@
 spring:
   kafka:
-    calculation-topic: demo_pzsp2
-    result-topic: demo_pzsp2_result
-    bootstrap-servers: kafka:9092
+    annotation-request-topic: annotation-request
+    bootstrap-servers: localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      bootstrap-servers: kafka:9092
-    consumer:
-      group-id: core-annotator
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: com.annotator.core.kafka.CalculationResultDeserializer
-      bootstrap-servers: kafka:9092
+      bootstrap-servers: localhost:29092
+#    consumer:
+#      group-id: core-annotator
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: com.annotator.core.kafka.JsonSerializer
+#      bootstrap-servers: kafka:9092
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://db:5432/annotator_db
+    url: jdbc:postgresql://localhost:5432/annotator_db
     username: postgres
     password: postgres
   jpa:

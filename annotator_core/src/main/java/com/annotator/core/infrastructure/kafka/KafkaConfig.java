@@ -1,4 +1,4 @@
-package com.annotator.core.config;
+package com.annotator.core.infrastructure.kafka;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -6,5 +6,4 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @Configuration
 public class KafkaConfig {
-
 }
