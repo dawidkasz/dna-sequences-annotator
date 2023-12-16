@@ -8,4 +8,4 @@ build/
 # Ignore Gradle build output directory
 build
 
-venv/
+**/venv/
