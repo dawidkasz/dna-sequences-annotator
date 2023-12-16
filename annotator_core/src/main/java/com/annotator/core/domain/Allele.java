@@ -23,7 +23,6 @@ public class Allele {
     }
 
     public static Allele from(String nucleotides) {
-        System.out.println(nucleotides);
         var parsedNucleotides = nucleotides.chars()
             .mapToObj(c -> {
                 if (c == '.') {
