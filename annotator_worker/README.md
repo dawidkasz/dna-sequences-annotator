@@ -21,3 +21,7 @@ Also, to download gtf files:
 chmod +x local_setup.sh
 ./local_setup.sh
 ```
+
+```shell
+ ./gradlew build && docker build -t annotation_worker_dev:latest .
+```
