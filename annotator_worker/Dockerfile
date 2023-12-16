@@ -20,8 +20,8 @@ RUN git clone https://github.com/tkzeng/Pangolin.git \
  && pip install .
 
 RUN mkdir data
-RUN wget -O ./data/GRCh38.primary_assembly.genome.fa.gz https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/GRCh38.primary_assembly.genome.fa.gz
-RUN wget -O ./data/gencode.v38.annotation.db https://www.dropbox.com/sh/6zo0aegoalvgd9f/AADOhGYJo8tbUhpscp3wSFj6a/gencode.v38.annotation.db
+RUN wget -O ./data/GRCh37.primary_assembly.genome.fa.gz ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
+RUN wget -O ./data/gencode.v38lift37.annotation.db https://www.dropbox.com/sh/6zo0aegoalvgd9f/AAA9Q90Pi1UqSzX99R_NM803a/gencode.v38lift37.annotation.db
 
 RUN gradle build
 
