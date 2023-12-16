@@ -10,9 +10,9 @@ public class PythonProcessRunner {
 
         String[] command = {
 //                For local development
-                pwd + "/../venv/bin/pangolin",
+//                pwd + "/../venv/bin/pangolin",
 //                For docker
-//                "pangolin",
+                "pangolin",
                 pwd + "/input/" + inputFile,
                 pwd + "/data/GRCh37.primary_assembly.genome.fa.gz",
                 pwd + "/data/gencode.v38lift37.annotation.db",

@@ -66,13 +66,13 @@ services:
     ports:
       - "8080:8080"
 
-#  worker:
-#    build: annotator_worker
-#    restart: always
-#    depends_on:
-#      - kafka
-#    deploy:
-#      mode: replicated
-#      replicas: 1
+  worker:
+    image: annotation_worker_dev:latest
+    restart: always
+    depends_on:
+      - kafka
+    deploy:
+      mode: replicated
+      replicas: 1
 volumes:
   postgres-data:
