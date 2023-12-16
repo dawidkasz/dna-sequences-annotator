@@ -1,7 +1,5 @@
 package com.annotator.core;
 
-import com.annotator.core.domain.Calculation;
-import com.annotator.core.repository.AnnotationsRepository;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -53,8 +51,8 @@ abstract class BaseIntegrationTest {
 
     @Autowired
     protected KafkaTemplate<String, Object> kafkaTemplate;
-    @Autowired
-    protected AnnotationsRepository annotationsRepository;
+//    @Autowired
+//    protected AnnotationsRepository annotationsRepository;
     @Autowired
     protected RestTemplate restTemplate;
 
@@ -69,16 +67,16 @@ abstract class BaseIntegrationTest {
         }
     }
 
-    protected ResponseEntity<Calculation> postCalculation(Calculation calculation) {
-        var uri = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .port(PORT)
-                .host("localhost")
-                .path("/calculate")
-                .build().toUri();
-
-        return restTemplate.postForEntity(uri, new HttpEntity<>(calculation), Calculation.class);
-    }
+//    protected ResponseEntity<Calculation> postCalculation(Calculation calculation) {
+//        var uri = UriComponentsBuilder.newInstance()
+//                .scheme("http")
+//                .port(PORT)
+//                .host("localhost")
+//                .path("/calculate")
+//                .build().toUri();
+//
+//        return restTemplate.postForEntity(uri, new HttpEntity<>(calculation), Calculation.class);
+//    }
 
 
 }

@@ -1,12 +1,12 @@
 version: "3.9"
 
 services:
-  ui:
-    build: annotator_ui
-    restart: always
-    ports:
-      - "3000:3000"
-    command: yarn start
+#  ui:
+#    build: annotator_ui
+#    restart: always
+#    ports:
+#      - "3000:3000"
+#    command: yarn start
 
   db:
     image: postgres
@@ -51,28 +51,29 @@ services:
               kafka-topics --bootstrap-server kafka:9092 --list && \
               kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic demo_pzsp2 --replication-factor 1 --partitions 1 && \
               kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic demo_pzsp2_result --replication-factor 1 --partitions 1 && \
+              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 1 && \
               echo -e 'Successfully created the following topics:' && \
               kafka-topics --bootstrap-server kafka:9092 --list'"
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
-
-  core:
-    build: annotator_core
-    restart: always
-    depends_on:
-      - db
-      - kafka
-    ports:
-      - "8080:8080"
-
-  worker:
-    build: annotator_worker
-    restart: always
-    depends_on:
-      - kafka
-    deploy:
-      mode: replicated
-      replicas: 1
+##
+##  core:
+#    build: annotator_core
+#    restart: always
+#    depends_on:
+#      - db
+#      - kafka
+#    ports:
+#      - "8080:8080"
+#
+#  worker:
+#    build: annotator_worker
+#    restart: always
+#    depends_on:
+#      - kafka
+#    deploy:
+#      mode: replicated
+#      replicas: 1
 volumes:
   postgres-data:
