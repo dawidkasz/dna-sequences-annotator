@@ -1,16 +1,17 @@
-package com.annotator;
+package com.annotator.kafka;
 
+import com.annotator.domain.AnnotatedResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 
 @Slf4j
-public class CalculationResultSerializer implements Serializer<CalculationResult> {
+public class AnnotationResultSerializer implements Serializer<AnnotatedResult> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public byte[] serialize(String topic, CalculationResult data) {
+    public byte[] serialize(String topic, AnnotatedResult data) {
         try {
             if (data == null) {
                 log.error("Null received at serializing");
