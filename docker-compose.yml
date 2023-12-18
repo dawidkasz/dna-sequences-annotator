@@ -1,12 +1,12 @@
 version: "3.9"
 
 services:
-#  ui:
-#    build: annotator_ui
-#    restart: always
-#    ports:
-#      - "3000:3000"
-#    command: yarn start
+  #  ui:
+  #    build: annotator_ui
+  #    restart: always
+  #    ports:
+  #      - "3000:3000"
+  #    command: yarn start
 
   db:
     image: postgres
@@ -49,9 +49,8 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
               kafka-topics --bootstrap-server kafka:9092 --list && \
-              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic demo_pzsp2 --replication-factor 1 --partitions 1 && \
-              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic demo_pzsp2_result --replication-factor 1 --partitions 1 && \
               kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 1 && \
+              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-result --replication-factor 1 --partitions 1 && \
               echo -e 'Successfully created the following topics:' && \
               kafka-topics --bootstrap-server kafka:9092 --list'"
     environment:

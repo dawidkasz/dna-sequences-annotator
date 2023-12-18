@@ -7,19 +7,19 @@ import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Serializer;
 
 @Slf4j
-public class AnnotationResultSerializer implements Serializer<AnnotatedResult> {
+public class AnnotatedResultSerializer implements Serializer<AnnotatedResult> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public byte[] serialize(String topic, AnnotatedResult data) {
+    public byte[] serialize(final String topic, final AnnotatedResult data) {
         try {
             if (data == null) {
                 log.error("Null received at serializing");
                 return null;
             }
             return objectMapper.writeValueAsBytes(data);
-        } catch (Exception e) {
-            throw new SerializationException("Error when serializing MessageDto to byte[]");
+        } catch (final Exception e) {
+            throw new SerializationException("Error when serializing AnnotatedResult to byte[]");
         }
     }
 }

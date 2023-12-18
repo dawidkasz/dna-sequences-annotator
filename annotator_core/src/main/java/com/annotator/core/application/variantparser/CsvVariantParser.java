@@ -24,11 +24,12 @@ public class CsvVariantParser implements VariantParser {
             String[] row;
             while ((row = csvReader.readNext()) != null) {
                 Variant variant = new Variant.Builder()
-                    .chromosome(row[header.chromIdx])
-                    .position(Long.parseLong(row[header.posIdx]))
-                    .referenceAllele(row[header.refIdx])
-                    .alternativeAllele(row[header.altIdx])
-                    .build();
+                        .chromosome(row[header.chromIdx])
+                        .position(Long.parseLong(row[header.posIdx]))
+                        .referenceAllele(row[header.refIdx])
+                        .alternativeAllele(row[header.altIdx])
+                        .gene(row[header.genIdx])
+                        .build();
 
                 variants.add(variant);
             }
@@ -39,16 +40,17 @@ public class CsvVariantParser implements VariantParser {
         return variants;
     }
 
-    private record Header(int chromIdx, int posIdx, int refIdx, int altIdx) {
+    private record Header(int chromIdx, int posIdx, int refIdx, int altIdx, int genIdx) {
         public static Header from(String[] row) {
             Objects.requireNonNull(row);
             List<String> header = Arrays.stream(row).collect(Collectors.toList());
 
             return new Header(
-                findColumnIndex(header, "#CHROM"),
-                findColumnIndex(header, "POS"),
-                findColumnIndex(header, "REF"),
-                findColumnIndex(header, "ALT")
+                    findColumnIndex(header, "#CHROM"),
+                    findColumnIndex(header, "POS"),
+                    findColumnIndex(header, "REF"),
+                    findColumnIndex(header, "ALT"),
+                    findColumnIndex(header, "GENE")
             );
         }
 

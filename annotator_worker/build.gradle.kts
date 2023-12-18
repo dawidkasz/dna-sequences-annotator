@@ -15,7 +15,10 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0") // SLF4J binding for Log4j
     implementation("org.apache.logging.log4j:log4j-api:2.20.0")
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-
+    implementation("io.projectreactor.kafka:reactor-kafka:1.3.22")
+    implementation("com.google.guava:guava:32.1.3-jre")
+    implementation("com.opencsv:opencsv:5.9")
+    
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 

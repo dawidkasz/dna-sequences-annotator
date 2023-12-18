@@ -1,5 +1,7 @@
 package com.annotator.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,27 +17,27 @@ public class Allele {
     public Allele(List<Nucleotide> nucleotides) {
         checkArgument(!nucleotides.isEmpty(), "Allele can not be empty.");
         checkArgument(
-            !(nucleotides.size() > 1 && nucleotides.contains(Nucleotide.BLANK)),
-            "Allele can not contain any more nucleotides if it contains a blank one."
+                !(nucleotides.size() > 1 && nucleotides.contains(Nucleotide.BLANK)),
+                "Allele can not contain any more nucleotides if it contains a blank one."
         );
-        
+
         this.nucleotides = nucleotides;
     }
 
     public static Allele from(String nucleotides) {
         var parsedNucleotides = nucleotides.chars()
-            .mapToObj(c -> {
-                if (c == '.') {
-                    return Nucleotide.BLANK;
-                }
+                .mapToObj(c -> {
+                    if (c == '.') {
+                        return Nucleotide.BLANK;
+                    }
 
-                return Nucleotide.valueOf(String.valueOf((char) c));
-            })
-            .collect(Collectors.toList());
+                    return Nucleotide.valueOf(String.valueOf((char) c));
+                })
+                .collect(Collectors.toList());
 
         return new Allele(parsedNucleotides);
     }
-    
+
     public boolean isBlank() {
         return nucleotides.size() == 1 && nucleotides.get(0).equals(Nucleotide.BLANK);
     }
@@ -45,6 +47,7 @@ public class Allele {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         if (isBlank()) {
             return Nucleotide.BLANK.getValue();
