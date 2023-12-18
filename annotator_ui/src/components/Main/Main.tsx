@@ -36,7 +36,7 @@ const Main: React.FC = () => {
       formData.append('algorithms', "PANGOLIN");
 
       try {
-        const response = await fetch('http://localhost:8080/annotate/csv', {
+        const response = await fetch('http://core:8080/annotate/csv', {
           method: 'POST',
           body: formData,
         });

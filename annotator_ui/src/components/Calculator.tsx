@@ -15,7 +15,7 @@ function Calculator() {
     const interval = setInterval(async() => {
       let response;
       try {
-         response = await fetch("http://localhost:8080/list");
+         response = await fetch("http://core:8080/list");
       } catch (e) {
         console.log(e);
         return;
@@ -32,7 +32,7 @@ function Calculator() {
     e.preventDefault();
 
     try {
-      await fetch('http://localhost:8080/calculate', {
+      await fetch('http://core:8080/calculate', {
         method: 'POST',
         headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
         body: JSON.stringify({a: num1, b: num2})

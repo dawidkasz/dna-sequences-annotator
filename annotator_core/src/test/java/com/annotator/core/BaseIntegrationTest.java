@@ -71,7 +71,7 @@ abstract class BaseIntegrationTest {
 //        var uri = UriComponentsBuilder.newInstance()
 //                .scheme("http")
 //                .port(PORT)
-//                .host("localhost")
+//                .host("core")
 //                .path("/calculate")
 //                .build().toUri();
 //
