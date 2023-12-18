@@ -27,27 +27,6 @@ code {
   flex: 1;
 }
 
-/* Styled file input */
-.file-input-label {
-  display: inline-block;
-  background-color: #2eae20;
-  color: #fff;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-bottom: 40px;
-  margin-top: 40px;
-}
-
-.file-input {
-  display: none;
-}
-
-.file-input-label:hover {
-  background-color: #0056b3;
-}
-
 /* Checkbox styles */
 .left-section div {
   margin-bottom: 20px;
@@ -57,6 +36,7 @@ code {
 .checkbox-container {
   display: flex;
   flex-direction: column;
+  margin-top: 50px;
 }
 
 /* Right section styles */
@@ -157,3 +137,45 @@ code {
   width: 100px;
 }
 
+.table-container {
+  margin-top: 20px;
+}
+
+.csv-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.csv-table th,
+.csv-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.green-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.blue-button {
+  background-color: #3568a5;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}

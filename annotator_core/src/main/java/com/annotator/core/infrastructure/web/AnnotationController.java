@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -24,9 +25,11 @@ public class AnnotationController {
 
     @PostMapping("/csv")
     public ResponseEntity<AnnotationResponse> annotateVcfFile(
-            @RequestParam("file") final MultipartFile file,
-            @RequestParam("algorithms") final List<AnnotationAlgorithm> algorithms
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "algorithms", defaultValue = "PANGOLIN") String algorithmParam
     ) {
+        List<AnnotationAlgorithm> algorithms = Collections.singletonList(AnnotationAlgorithm.valueOf(algorithmParam));
+
         log.info("Annotation variants using {} algorithms", algorithms);
 
         try {
