@@ -4,8 +4,14 @@ import Navigation from '../Navigation';
 import { FaUserCircle } from 'react-icons/fa';
 
 const Main: React.FC = () => {
-  const allAlgorithms = ['Algorytm1', 'Algorytm2', 'Algorytm3'];
+  const allAlgorithms = ['PANGOLIN', 'Algorytm2', 'Algorytm3'];
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(allAlgorithms);
+  const [file, setFile] = useState<File | null>(null);
+
+  const csvData = [
+    { GENE: 'BRCA1', '#CHROM': 17, POS: 41276135, REF: 'T', ALT: 'G' },
+    { GENE: 'BRCA1', '#CHROM': 17, POS: 41276135, REF: 'C', ALT: 'T' },
+  ];
 
   const handleCheckboxChange = (algorithm: string) => {
     setSelectedAlgorithms((prevSelected) => {
@@ -17,40 +23,102 @@ const Main: React.FC = () => {
     });
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile: File | null = event.target.files?.[0] || null;
+    setFile(selectedFile);
+  };
+
+
+  const handleUpload = async () => {
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('algorithms', "PANGOLIN");
+
+      try {
+        const response = await fetch('http://localhost:8080/annotate/csv', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Success:', data);
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  };
+
+
   return (
-    <div>
-      <h1 className='header'>Panel adnotacji</h1>
+      <div>
+        <h1 className='header'>Panel adnotacji</h1>
 
-      <div className="container">
-        <div className="left-section">
-          <FaUserCircle className="user-icon" />
+        <div className="container">
+          <div className="left-section">
+            <FaUserCircle className="user-icon" />
 
-          {/* Styled file input */}
-          <label className="file-input-label">
-            <input type="file" className="file-input" />
-            Załaduj plik
-          </label>
+            <label className="green-button">
+              <input type="file" className="file-input" onChange={handleFileChange} />
+              Załaduj plik
+            </label>
 
-          <div className='checkbox-container'>
-            {allAlgorithms.map((algorithm) => (
-              <Checkbox
-                key={algorithm}
-                label={algorithm}
-                onChange={() => handleCheckboxChange(algorithm)}
-                checked={selectedAlgorithms.includes(algorithm)}
-              />
-            ))}
+            <button className="green-button" onClick={handleUpload}>Adnotuj</button>
+
+            <div className='checkbox-container'>
+              {allAlgorithms.map((algorithm) => (
+                  <Checkbox
+                      key={algorithm}
+                      label={algorithm}
+                      onChange={() => handleCheckboxChange(algorithm)}
+                      checked={selectedAlgorithms.includes(algorithm)}
+                  />
+              ))}
+            </div>
+            <Navigation />
           </div>
-          <Navigation />
-        </div>
-        <div className="right-section">
-          <h1>Krótki przewodnik</h1>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+          <div className="right-section">
+            <h1>Krótki przewodnik</h1>
+            <p>
+              W celu zaadnotowania pliku, kliknij przycisk <button className="green-button">Załaduj plik</button> i wybierz plik, który chcesz zaadnotować <br/>
+              Wybierz algorytmy zaznaczając odpowiednie checkboxy, po czym kliknij przycisk <button className="green-button">Adnotuj</button> <br/><br/>
+              Poniżej znajduje się przykładowy plik csv, który można poddać adnotacji. Widać w nim strukturę kolumn i przykładowe dane:
+            </p>
+            <div className="table-container">
+              <table className="csv-table">
+                <thead>
+                <tr>
+                  <th>GENE</th>
+                  <th>#CHROM</th>
+                  <th>POS</th>
+                  <th>REF</th>
+                  <th>ALT</th>
+                </tr>
+                </thead>
+                <tbody>
+                {csvData.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      <td>{row.GENE}</td>
+                      <td>{row['#CHROM']}</td>
+                      <td>{row.POS}</td>
+                      <td>{row.REF}</td>
+                      <td>{row.ALT}</td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p>
+              Po zakończeniu działania możesz przejść do zakładki <button className="blue-button">Historia</button> i pobrać pliki wynikowe z zaanotowanymi wariantami
+            </p>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 
