@@ -1,17 +1,19 @@
 spring:
   kafka:
     annotation-request-topic: annotation-request
+    annotation-result-topic: annotation-result
     bootstrap-servers: localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       bootstrap-servers: localhost:29092
-#    consumer:
-#      group-id: core-annotator
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: com.annotator.core.kafka.JsonSerializer
-#      bootstrap-servers: kafka:9092
+    consumer:
+      group-id: core-annotator
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.annotator.core.infrastructure.kafka.AnnotatedResultDeserializer
+      bootstrap-servers: localhost:29092
+      group-instance-id: result-client #skips rebalancing - remove in prod
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/annotator_db

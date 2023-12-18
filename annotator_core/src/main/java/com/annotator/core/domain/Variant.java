@@ -1,10 +1,10 @@
 package com.annotator.core.domain;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 @Getter
@@ -16,8 +16,9 @@ public class Variant {
     private final Allele referenceAllele;
     private final Allele alternativeAllele;
     private final VariantType type;
+    private final String gene; // this is used in pangoli, I believe there is need to handle additional fields
 
-    private Variant(String chromosome, long position, Allele referenceAllele, Allele alternativeAllele) {
+    private Variant(String chromosome, long position, Allele referenceAllele, Allele alternativeAllele, @Nullable String gene) {
         Objects.requireNonNull(chromosome);
         Objects.requireNonNull(referenceAllele);
         Objects.requireNonNull(alternativeAllele);
@@ -31,6 +32,7 @@ public class Variant {
                 !referenceAllele.isBlank() && !referenceAllele.isBlank();
 
         this.type = isSnv ? VariantType.SNV : VariantType.INDEL;
+        this.gene = gene;
     }
 
     public boolean isSnv() {
@@ -51,6 +53,7 @@ public class Variant {
         private long position;
         private Allele referenceAllele;
         private Allele alternativeAllele;
+        private String gene;
 
         public Builder chromosome(String chromosome) {
             this.chromosome = chromosome;
@@ -80,8 +83,13 @@ public class Variant {
             return alternativeAllele(Allele.from(allele));
         }
 
+        public Builder gene(String gene) {
+            this.gene = gene;
+            return this;
+        }
+
         public Variant build() {
-            return new Variant(chromosome, position, referenceAllele, alternativeAllele);
+            return new Variant(chromosome, position, referenceAllele, alternativeAllele, gene);
         }
     }
 }
