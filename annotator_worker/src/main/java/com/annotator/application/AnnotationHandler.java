@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Slf4j
-public class AnnotationDispatcher {
+public class AnnotationHandler {
     private final KafkaRequestConsumer consumer;
 
     private final KafkaSender<String, AnnotatedResult> producer;
@@ -34,6 +34,19 @@ public class AnnotationDispatcher {
             }
         }
         return Optional.empty();
+    }
+
+    private static AnnotatedResult toResult(final AnnotationRequest request, final String result) {
+        final var variant = request.getVariant();
+        return new AnnotatedResult(
+                request.getAnnotationId(),
+                variant.getChromosome(),
+                variant.getPosition(),
+                variant.getReferenceAllele(),
+                variant.getAlternativeAllele(),
+                request.getAlgorithm().name(),
+                result
+        );
     }
 
     public void start() {
@@ -53,7 +66,7 @@ public class AnnotationDispatcher {
         final var request = r.value();
         return handle(request)
                 .map(result -> Mono.just(
-                        Tuples.of(new AnnotatedResult(request.getAnnotationId(), result), r.receiverOffset()))
+                        Tuples.of(AnnotationHandler.toResult(request, result), r.receiverOffset()))
                 )
                 .orElse(Mono.empty());
     }

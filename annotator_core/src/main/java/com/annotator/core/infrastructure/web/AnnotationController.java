@@ -24,19 +24,20 @@ public class AnnotationController {
 
     @PostMapping("/csv")
     public ResponseEntity<AnnotationResponse> annotateVcfFile(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("algorithms") List<AnnotationAlgorithm> algorithms
+            @RequestParam("file") final MultipartFile file,
+            @RequestParam("algorithms") final List<AnnotationAlgorithm> algorithms
     ) {
         log.info("Annotation variants using {} algorithms", algorithms);
 
         try {
-            AnnotationId annotationId = variantProcessor.annotate(file.getInputStream(), algorithms);
+            final AnnotationId annotationId = variantProcessor.annotate(file.getInputStream(), algorithms);
             return ResponseEntity.ok(new AnnotationResponse(annotationId.getId()));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("Error: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
+
 
     private record AnnotationResponse(String annotationId) {
     }

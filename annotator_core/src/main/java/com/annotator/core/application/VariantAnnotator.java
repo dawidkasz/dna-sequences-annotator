@@ -1,10 +1,7 @@
 package com.annotator.core.application;
 
 import com.annotator.core.application.variantparser.VariantParser;
-import com.annotator.core.domain.AnnotationAlgorithm;
-import com.annotator.core.domain.AnnotationRequest;
-import com.annotator.core.domain.AnnotationId;
-import com.annotator.core.domain.Variant;
+import com.annotator.core.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,22 +12,23 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class VariantAnnotator {
+public class VariantAnnotator implements AnnotationConsumer {
     private final VariantParser parser;
     private final AnnotationProducer annotationProducer;
     private final VariantRepository variantRepository;
+    private final AnnotationRepository annotationRepository;
 
-    public AnnotationId annotate(InputStream variantFileStream, List<AnnotationAlgorithm> algorithms) {
-        List<Variant> variants = parser.read(variantFileStream);
+    public AnnotationId annotate(final InputStream variantFileStream, final List<AnnotationAlgorithm> algorithms) {
+        final List<Variant> variants = parser.read(variantFileStream);
 
-        var batchId = AnnotationId.create();
+        final var batchId = AnnotationId.create();
         variants.forEach(variant -> annotateSingleVariant(batchId, variant, algorithms));
 
         return batchId;
     }
 
-    private void annotateSingleVariant(AnnotationId annotationId, Variant variant, List<AnnotationAlgorithm> algorithms) {
-        boolean exists = variantRepository.find(
+    private void annotateSingleVariant(final AnnotationId annotationId, final Variant variant, final List<AnnotationAlgorithm> algorithms) {
+        final boolean exists = variantRepository.find(
                 variant.getChromosome(),
                 variant.getPosition(),
                 variant.getReferenceAllele(),
@@ -41,6 +39,12 @@ public class VariantAnnotator {
             variantRepository.save(variant);
         }
 
-        algorithms.forEach(alg ->  annotationProducer.annotate(new AnnotationRequest(annotationId, variant, alg)));
+        algorithms.forEach(alg -> annotationProducer.annotate(new AnnotationRequest(annotationId, variant, alg)));
+    }
+
+    @Override
+    public void consumeAnnotation(final Annotation annotation) {
+        log.info("Processed {}", annotation);
+        annotationRepository.save(annotation);
     }
 }
