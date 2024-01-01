@@ -1,8 +1,9 @@
-package com.annotator.core.domain;
+package com.annotator.core.domain.annotation;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum Nucleotide {
     A("A"),
@@ -11,7 +12,6 @@ public enum Nucleotide {
     T("T"),
     BLANK(".");
 
-    @Getter
     private final String value;
 
     @Override

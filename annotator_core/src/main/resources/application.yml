@@ -22,7 +22,7 @@ spring:
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true

@@ -22,6 +22,9 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("com.opencsv:opencsv:5.9")
     implementation("com.google.guava:guava:32.1.3-jre")
+    implementation("io.hypersistence:hypersistence-utils-hibernate-62:3.7.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations:2.16.1")
+
     runtimeOnly("org.postgresql:postgresql")
 
     compileOnly("org.projectlombok:lombok:1.18.30")
@@ -35,6 +38,10 @@ dependencies {
     testImplementation("org.testcontainers:kafka")
     testImplementation("org.testcontainers:postgresql")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("org.mockito:mockito-core:5.8.0")
+
+
 }
 
 tasks.withType<Test> {

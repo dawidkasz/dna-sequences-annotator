@@ -1,22 +1,19 @@
 package com.annotator.core.infrastructure.kafka;
 
-import lombok.Data;
+import com.annotator.core.domain.annotation.AnnotationAlgorithm;
+import com.annotator.core.domain.annotation.AnnotationId;
+import com.annotator.core.domain.order.OrderId;
+import com.annotator.core.domain.order.request.AnnotationRequestId;
+import com.annotator.core.domain.order.result.AnnotationResult;
 
-@Data
-public class AnnotatedResult {
+import java.util.UUID;
 
-
-    private Id annotationId;
-    private String chromosome;
-    private long position;
-    private String referenceAllele;
-    private String alternativeAllele;
-    private String algorithm;
-    private String result;
-
-    @Data
-    static class Id {
-        private String id;
+public record AnnotatedResult(
+        UUID annotationRequestId, UUID orderId,
+        UUID annotationId, String algorithm, String result) {
+    public AnnotationResult toDomain() {
+        return new AnnotationResult(AnnotationRequestId.from(annotationRequestId), new OrderId(orderId),
+                new AnnotationId(annotationId), AnnotationAlgorithm.valueOf(algorithm), result);
     }
 
 }

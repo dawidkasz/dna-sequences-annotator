@@ -11,7 +11,7 @@ import static com.annotator.config.KafkaConfig.getSenderOps;
 
 @Slf4j
 public class Main {
-
+    //TODO add java properties
     public static void main(final String[] args) {
         final var consumer = new KafkaRequestConsumer(getOps());
         final var producer = KafkaSender.create(getSenderOps());
