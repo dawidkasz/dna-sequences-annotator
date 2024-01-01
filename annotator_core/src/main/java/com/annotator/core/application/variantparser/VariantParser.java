@@ -1,6 +1,6 @@
 package com.annotator.core.application.variantparser;
 
-import com.annotator.core.domain.Variant;
+import com.annotator.core.domain.annotation.Variant;
 
 import java.io.InputStream;
 import java.util.List;

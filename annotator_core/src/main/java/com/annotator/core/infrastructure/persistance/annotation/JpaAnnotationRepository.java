@@ -1,40 +1,69 @@
 package com.annotator.core.infrastructure.persistance.annotation;
 
-import com.annotator.core.application.AnnotationRepository;
-import com.annotator.core.domain.Annotation;
-import com.annotator.core.infrastructure.persistance.variant.JpaVariant;
-import com.annotator.core.infrastructure.persistance.variant.SpringDataVariantRepository;
+import com.annotator.core.domain.annotation.*;
+import com.annotator.core.domain.order.result.AnnotationResult;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class JpaAnnotationRepository implements AnnotationRepository {
+public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
     private final SpringDataAnnotationRepository annotationRepository;
-    private final SpringDataVariantRepository variantRepository;
 
-    private static JpaAnnotation toJpa(final Annotation annotation, final Long variantId) {
+    private static JpaAnnotation toJpa(final VariantAnnotations annotation) {
+        final var results = annotation.annotations().stream().collect(Collectors.toMap(x -> x.algorithm().name(), Annotation::result));
         return JpaAnnotation.builder()
-                .batchId(annotation.annotationId().toString())
-                .result(annotation.result())
-                .variantId(variantId)
-                .algorithm(annotation.algorithm().name())
+                .variant(JpaVariant.from(annotation.variant()))
+                .results(results)
+                .annotationId(annotation.annotationId().uuid())
+                .state(!annotation.annotations().isEmpty())
                 .build();
     }
 
+
     @Override
-    public void save(final Annotation annotation) {
-        final var variant = annotation.variant();
-        final var variantId = variantRepository.findByChromosomeAndPositionAndReferenceAlleleAndAlternativeAllele(
-                variant.getChromosome(), variant.getPosition(), variant.getReferenceAllele().toString(), variant.getAlternativeAllele().toString()
-        ).map(JpaVariant::getId).orElseThrow();
-        annotationRepository.save(JpaAnnotationRepository.toJpa(annotation, variantId));
+    public boolean exists(final Variant variant) {
+        return annotationRepository.existsById(JpaVariant.from(variant));
     }
 
     @Override
-    public List<Annotation> getBatch(final String batchId) {
-        return List.of();
+    @Transactional
+    public void save(final VariantAnnotations annotation) {
+        final var jpaAnnotation = JpaAnnotationRepository.toJpa(annotation);
+        annotationRepository
+                .findById(jpaAnnotation.getVariant())
+                .ifPresentOrElse(
+                        result -> {
+                            annotation.annotations().forEach(x -> result.getResults().put(x.algorithm().name(), x.result()));
+                            result.setState(!result.getResults().isEmpty());
+                            annotationRepository.save(result);
+                        }, () -> annotationRepository.save(jpaAnnotation)
+                );
+
+    }
+
+    @Override
+    @Transactional
+    public void save(final AnnotationResult result) {
+        annotationRepository.findByAnnotationId(result.annotationId().uuid())
+                .ifPresent(jpaAnnotation -> {
+                    jpaAnnotation.getResults().put(result.algorithm().name(), result.result());
+                    jpaAnnotation.setState(true);
+                    annotationRepository.save(jpaAnnotation);
+                });
+    }
+
+    @Override
+    public Optional<VariantAnnotations> findById(final AnnotationId annotationId) {
+        return annotationRepository.findByAnnotationId(annotationId.uuid()).map(JpaAnnotation::toAnnotation);
+    }
+
+    @Override
+    public Optional<VariantAnnotations> findByVariant(final Variant variant) {
+        return annotationRepository.findById(JpaVariant.from(variant)).map(JpaAnnotation::toAnnotation);
     }
 }

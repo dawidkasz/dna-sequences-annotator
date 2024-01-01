@@ -1,4 +1,4 @@
-package com.annotator.core.domain;
+package com.annotator.core.domain.annotation;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -14,7 +14,7 @@ public class Allele {
         this.nucleotides = List.of(Nucleotide.BLANK);
     }
 
-    public Allele(List<Nucleotide> nucleotides) {
+    public Allele(final List<Nucleotide> nucleotides) {
         checkArgument(!nucleotides.isEmpty(), "Allele can not be empty.");
         checkArgument(
                 !(nucleotides.size() > 1 && nucleotides.contains(Nucleotide.BLANK)),
@@ -24,8 +24,8 @@ public class Allele {
         this.nucleotides = nucleotides;
     }
 
-    public static Allele from(String nucleotides) {
-        var parsedNucleotides = nucleotides.chars()
+    public static Allele from(final String nucleotides) {
+        final var parsedNucleotides = nucleotides.chars()
                 .mapToObj(c -> {
                     if (c == '.') {
                         return Nucleotide.BLANK;
@@ -52,7 +52,6 @@ public class Allele {
         if (isBlank()) {
             return Nucleotide.BLANK.getValue();
         }
-
         return nucleotides.stream().map(Nucleotide::name).collect(Collectors.joining(""));
     }
 }

@@ -37,18 +37,16 @@ public class AnnotationHandler {
     }
 
     private static AnnotatedResult toResult(final AnnotationRequest request, final String result) {
-        final var variant = request.getVariant();
         return new AnnotatedResult(
+                request.getAnnotationRequestId(),
+                request.getOrderId(),
                 request.getAnnotationId(),
-                variant.getChromosome(),
-                variant.getPosition(),
-                variant.getReferenceAllele(),
-                variant.getAlternativeAllele(),
                 request.getAlgorithm().name(),
                 result
         );
     }
 
+    //TODO add buffer
     public void start() {
         final var sendRecords = consumer.getRequestStream()
                 .flatMap(this::processRequest)
@@ -74,7 +72,7 @@ public class AnnotationHandler {
     private SenderRecord<String, AnnotatedResult, ReceiverOffset> getSenderRecord(final Tuple2<AnnotatedResult, ReceiverOffset> receiverRecord) {
         final var value = receiverRecord.getT1();
         final ProducerRecord<String, AnnotatedResult> producerRecord = new ProducerRecord<>(
-                resultTopic, value.annotationId().getUuid().toString(), value
+                resultTopic, value.annotationId().toString(), value
         );
         return SenderRecord.create(producerRecord, receiverRecord.getT2());
     }

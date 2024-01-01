@@ -1,50 +1,54 @@
 package com.annotator.core.application;
 
 import com.annotator.core.application.variantparser.VariantParser;
-import com.annotator.core.domain.*;
+import com.annotator.core.domain.annotation.*;
+import com.annotator.core.domain.order.*;
+import com.annotator.core.domain.order.result.AnnotationResult;
+import com.annotator.core.domain.order.result.AnnotationResultConsumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class VariantAnnotator implements AnnotationConsumer {
+public class VariantAnnotator implements AnnotationResultConsumer {
     private final VariantParser parser;
-    private final AnnotationProducer annotationProducer;
-    private final VariantRepository variantRepository;
-    private final AnnotationRepository annotationRepository;
+    private final OrderService orderService;
+    private final OrderFactory orderFactory;
+    private final OrderRepository orderRepository;
+    private final AnnotationService annotationService;
+    private final VariantsAnnotationsRepository annotationsRepository;
 
-    public AnnotationId annotate(final InputStream variantFileStream, final List<AnnotationAlgorithm> algorithms) {
+    public OrderId annotate(final InputStream variantFileStream, final List<AnnotationAlgorithm> algorithms) {
         final List<Variant> variants = parser.read(variantFileStream);
 
-        final var batchId = AnnotationId.create();
-        variants.forEach(variant -> annotateSingleVariant(batchId, variant, algorithms));
+        final var order = orderFactory.createOrder(variants, algorithms);
 
-        return batchId;
+        orderService.handle(order);
+
+        return order.getOrderId();
     }
 
-    private void annotateSingleVariant(final AnnotationId annotationId, final Variant variant, final List<AnnotationAlgorithm> algorithms) {
-        final boolean exists = variantRepository.find(
-                variant.getChromosome(),
-                variant.getPosition(),
-                variant.getReferenceAllele(),
-                variant.getAlternativeAllele()
-        ).isPresent();
-
-        if (!exists) { // just to demonstrate usage, only temporary solution
-            variantRepository.save(variant);
-        }
-
-        algorithms.forEach(alg -> annotationProducer.annotate(new AnnotationRequest(annotationId, variant, alg)));
+    //TODO very slow
+    public List<VariantAnnotations> retrieveAnnotations(final OrderId orderId) {
+        final var order = orderRepository.find(orderId);
+        return order
+                .map(Order::getVariants)
+                .orElse(List.of()).stream()
+                .map(annotationsRepository::findByVariant)
+                .flatMap(Optional::stream)
+                .toList();
     }
 
     @Override
-    public void consumeAnnotation(final Annotation annotation) {
-        log.info("Processed {}", annotation);
-        annotationRepository.save(annotation);
+    public void consume(final AnnotationResult result) {
+        log.info("Processed {}", result);
+        annotationsRepository.save(result);
+        orderService.updateOrderWithResult(result);
     }
 }
