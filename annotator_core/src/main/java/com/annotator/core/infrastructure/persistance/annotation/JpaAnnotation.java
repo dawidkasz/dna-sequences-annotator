@@ -26,9 +26,9 @@ import java.util.UUID;
 @DynamicUpdate
 public class JpaAnnotation {
 
+    //TODO there should be also id from Order, for fast retrieval
     @EmbeddedId
-    private JpaVariantDetails variant;
-    private Long variantId;
+    private JpaVariant variant;
 
     private UUID annotationId;
 

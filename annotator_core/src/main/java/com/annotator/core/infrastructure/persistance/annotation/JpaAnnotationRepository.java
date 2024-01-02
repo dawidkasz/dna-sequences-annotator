@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -14,12 +13,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
     private final SpringDataAnnotationRepository annotationRepository;
-    private final JpaVariantRepository variantRepository;
 
     private static JpaAnnotation toJpa(final VariantAnnotations annotation) {
         final var results = annotation.annotations().stream().collect(Collectors.toMap(x -> x.algorithm().name(), Annotation::result));
         return JpaAnnotation.builder()
-                .variant(JpaVariantDetails.from(annotation.variant()))
+                .variant(JpaVariant.from(annotation.variant()))
                 .results(results)
                 .annotationId(annotation.annotationId().uuid())
                 .state(!annotation.annotations().isEmpty())
@@ -29,7 +27,7 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
 
     @Override
     public boolean exists(final Variant variant) {
-        return annotationRepository.existsById(JpaVariantDetails.from(variant));
+        return annotationRepository.existsById(JpaVariant.from(variant));
     }
 
     @Override
@@ -40,17 +38,11 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
                 .findById(jpaAnnotation.getVariant())
                 .ifPresentOrElse(
                         result -> {
-                            //TODO use native postgres hstack
                             annotation.annotations().forEach(x -> result.getResults().put(x.algorithm().name(), x.result()));
                             result.setState(!result.getResults().isEmpty());
                             annotationRepository.save(result);
-                        },
-                        () -> {
-                            final var variantId = variantRepository.findIdOrCreate(jpaAnnotation.getVariant());
-                            jpaAnnotation.setVariantId(variantId);
-                            annotationRepository.save(jpaAnnotation);
-                        });
-
+                        }, () -> annotationRepository.save(jpaAnnotation)
+                );
 
     }
 
@@ -72,10 +64,6 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
 
     @Override
     public Optional<VariantAnnotations> findByVariant(final Variant variant) {
-        return annotationRepository.findById(JpaVariantDetails.from(variant)).map(JpaAnnotation::toAnnotation);
-    }
-
-    public List<JpaAnnotation> findAllByVariantsId(final List<Long> variantIds) {
-        return annotationRepository.findAllByVariantIdIn(variantIds);
+        return annotationRepository.findById(JpaVariant.from(variant)).map(JpaAnnotation::toAnnotation);
     }
 }

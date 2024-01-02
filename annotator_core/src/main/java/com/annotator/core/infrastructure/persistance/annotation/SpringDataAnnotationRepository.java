@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface SpringDataAnnotationRepository extends CrudRepository<JpaAnnotation, JpaVariantDetails> {
+public interface SpringDataAnnotationRepository extends CrudRepository<JpaAnnotation, JpaVariant> {
     Optional<JpaAnnotation> findByAnnotationId(UUID annotationId);
-
-    List<JpaAnnotation> findAllByVariantIdIn(List<Long> variantIds);
 }

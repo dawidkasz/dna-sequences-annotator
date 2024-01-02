@@ -1,26 +1,51 @@
 package com.annotator.core.infrastructure.persistance.annotation;
 
-import jakarta.persistence.*;
-import lombok.*;
+
+import com.annotator.core.domain.annotation.Variant;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "variants")
-@Getter
-@Setter
+@Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class JpaVariant implements Serializable {
-    @Id
-    @GeneratedValue
-    private Long id;
+    @Column
+    private String chromosome;
+    @Column
+    private long position;
+    @Column
+    private String referenceAllele;
+    @Column
+    private String alternativeAllele;
+    @Column
+    private Variant.VariantType type;
+    @Column
+    private String gene;
 
-    @Embedded
-    private JpaVariantDetails variant;
+    public static JpaVariant from(final Variant variant) {
+        return JpaVariant.builder()
+                .chromosome(variant.getChromosome())
+                .position(variant.getPosition())
+                .referenceAllele(variant.getReferenceAllele().toString())
+                .alternativeAllele(variant.getAlternativeAllele().toString())
+                .type(variant.getType())
+                .gene(variant.getGene())
+                .build();
+    }
 
-    public JpaVariant(final JpaVariantDetails variant) {
-        this.variant = variant;
+    public Variant toVariant() {
+        return Variant.builder()
+                .chromosome(chromosome)
+                .position(position)
+                .referenceAllele(referenceAllele)
+                .alternativeAllele(alternativeAllele)
+                .gene(gene)
+                .build();
     }
 }
