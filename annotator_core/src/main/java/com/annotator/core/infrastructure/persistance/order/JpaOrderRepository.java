@@ -1,15 +1,15 @@
 package com.annotator.core.infrastructure.persistance.order;
 
 import com.annotator.core.domain.annotation.AnnotationAlgorithm;
+import com.annotator.core.domain.annotation.VariantAnnotations;
 import com.annotator.core.domain.order.*;
 import com.annotator.core.domain.order.request.AnnotationRequestId;
-import com.annotator.core.infrastructure.persistance.annotation.JpaAnnotationRepository;
-import com.annotator.core.infrastructure.persistance.annotation.JpaVariant;
-import com.google.common.collect.Lists;
+import com.annotator.core.infrastructure.persistance.annotation.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JpaOrderRepository implements OrderRepository {
     private final SpringDataOrderRepository orderRepository;
-    private final SpringDataVariantRepository variantRepository;
     private final JpaAnnotationRepository annotationRepository;
+    private final JpaVariantRepository variantRepository;
 
     private static JpaOrder toJpa(final Order order, final List<Long> variantIds) {
         return JpaOrder.builder()
@@ -30,8 +30,8 @@ public class JpaOrderRepository implements OrderRepository {
                 .build();
     }
 
-    private static Order toDomain(final JpaOrder order, final List<JpaOrderVariant> jpaVariants) {
-        final var variants = jpaVariants.stream().map(JpaOrderVariant::getVariant).map(JpaVariant::toVariant).toList();
+    private static Order toDomain(final JpaOrder order, final List<JpaVariant> jpaVariants) {
+        final var variants = jpaVariants.stream().map(JpaVariant::getVariant).map(JpaVariantDetails::toVariant).toList();
         final var algorithms = order.getAlgorithms().stream().map(AnnotationAlgorithm::valueOf).toList();
         return Order.builder()
                 .orderId(new OrderId(order.getOrderId()))
@@ -48,11 +48,12 @@ public class JpaOrderRepository implements OrderRepository {
     @Override
     @Transactional
     public void save(final Order order) {
-        final var variantsIds = order.getVariants().stream()
-                .map(JpaVariant::from)
-                .map(variant -> variantRepository.findByVariant(variant).orElseGet(() -> variantRepository.save(new JpaOrderVariant(variant))))
-                .map(JpaOrderVariant::getId)
-                .toList();
+        final var jpaVariants = order.getVariants().stream().map(JpaVariantDetails::from).toList();
+        final var variantsIds = variantRepository.findAllIds(jpaVariants);
+
+        if (variantsIds.size() != order.getVariants().size()) {
+            throw new IllegalStateException("Cannot save order - not all variants are present in database");
+        }
 
         orderRepository.save(toJpa(order, variantsIds));
     }
@@ -64,8 +65,22 @@ public class JpaOrderRepository implements OrderRepository {
         return orderRepository.findByOrderId(orderId.uuid())
                 .map(jpaOrder -> {
                     final var ids = jpaOrder.getVariants();
-                    final var variants = Lists.newArrayList(variantRepository.findAllById(ids));
+                    final var variants = variantRepository.findAllByVariants(ids);
+
+                    if (variants.size() != ids.size()) {
+                        throw new IllegalStateException("Cannot retrieve order - not all variants are present in database");
+                    }
                     return toDomain(jpaOrder, variants);
                 });
+    }
+
+    @Override
+    public List<VariantAnnotations> findOrderAnnotations(final OrderId orderId) {
+        return orderRepository.findByOrderId(orderId.uuid())
+                .map(JpaOrder::getVariants)
+                .map(annotationRepository::findAllByVariantsId)
+                .orElseGet(Collections::emptyList).stream()
+                .map(JpaAnnotation::toAnnotation)
+                .toList();
     }
 }
