@@ -2,7 +2,10 @@ package com.annotator.core.application;
 
 import com.annotator.core.application.variantparser.VariantParser;
 import com.annotator.core.domain.annotation.*;
-import com.annotator.core.domain.order.*;
+import com.annotator.core.domain.order.OrderFactory;
+import com.annotator.core.domain.order.OrderId;
+import com.annotator.core.domain.order.OrderRepository;
+import com.annotator.core.domain.order.OrderService;
 import com.annotator.core.domain.order.result.AnnotationResult;
 import com.annotator.core.domain.order.result.AnnotationResultConsumer;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +37,8 @@ public class VariantAnnotator implements AnnotationResultConsumer {
         return order.getOrderId();
     }
 
-    //TODO very slow
     public List<VariantAnnotations> retrieveAnnotations(final OrderId orderId) {
-        final var order = orderRepository.find(orderId);
-        return order
-                .map(Order::getVariants)
-                .orElse(List.of()).stream()
-                .map(annotationsRepository::findByVariant)
-                .flatMap(Optional::stream)
-                .toList();
+        return orderRepository.findOrderAnnotations(orderId);
     }
 
     @Override
