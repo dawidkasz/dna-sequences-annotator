@@ -46,11 +46,11 @@ public class CsvVariantParser implements VariantParser {
             final List<String> header = Arrays.stream(row).collect(Collectors.toList());
 
             return new Header(
-                    findColumnIndex(header, "#CHROM"),
+                    findColumnIndex(header, "CHROM"),
                     findColumnIndex(header, "POS"),
                     findColumnIndex(header, "REF"),
                     findColumnIndex(header, "ALT"),
-                    findColumnIndex(header, "GENE")
+                    findColumnIndex(header, "gene")
             );
         }
 

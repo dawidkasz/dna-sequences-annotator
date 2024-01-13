@@ -1,26 +1,58 @@
-FROM gradle:jdk17-focal
-WORKDIR /app
+FROM r-base:latest
+WORKDIR /app/annotator_worker
 
-RUN apt-get update \
- && command -v python3 >/dev/null 2>&1 || { echo >&2 "Installing Python..."; apt-get install -y python3; } \
- && command -v pip3 >/dev/null 2>&1 || { echo >&2 "Installing pip..."; apt-get install -y python3-pip; } \
- && command -v git >/dev/null 2>&1 || { echo >&2 "Installing git..."; apt-get install -y git; } \
- && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+      git \
+      libssl-dev \
+      curl \
+      openjdk-17-jre \
+      libffi-dev \
+      libsqlite3-dev \
+    && curl https://pyenv.run | bash \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install "setuptools<58" --upgrade && pip install gffutils biopython pandas pyfastx
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+# Set environment variables for pyenv
+ENV PYENV_ROOT /root/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
-RUN git clone https://github.com/tkzeng/Pangolin.git \
- && cd Pangolin \
- && pip install .
+# Initialize pyenv and install Python 3.10
+RUN echo 'eval "$(pyenv init --path)"' >> /etc/profile.d/pyenv.sh \
+    && echo 'eval "$(pyenv init -)"' >> /etc/profile.d/pyenv.sh \
+    && /root/.pyenv/bin/pyenv install 3.10.0 \
+    && /root/.pyenv/bin/pyenv global 3.10.0
 
-RUN mkdir data
-RUN wget -O ./data/GRCh37.primary_assembly.genome.fa.gz ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/GRCh37_mapping/GRCh37.primary_assembly.genome.fa.gz
-RUN wget -O ./data/gencode.v38lift37.annotation.db https://www.dropbox.com/sh/6zo0aegoalvgd9f/AAA9Q90Pi1UqSzX99R_NM803a/gencode.v38lift37.annotation.db
+# Upgrade pip, install a specific version of setuptools and wheel
+RUN pip install --upgrade pip \
+    && pip install setuptools==57.5.0 \
+    && pip install wheel
 
+# Clone Pangolin repository
+RUN git clone https://github.com/tkzeng/Pangolin.git
+
+# Install Python dependencies
+RUN pip install gffutils biopython pandas pyfastx \
+    && pip install pyvcf \
+    && pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install Pangolin
+RUN cd Pangolin && pip install .
+
+# Copy R dependencies and install
+COPY ./R-dependencies.txt R-dependencies.txt
+RUN git clone https://github.com/raphaelleman/SPiP \
+ && cd ./SPiP \
+ && Rscript ../R-dependencies.txt
+
+RUN mkdir input && mkdir output
+
+# Copy data
+COPY ./data/ ./data/
+
+# Copy JAR file
 ARG JAR_FILE=build/libs/annotator_worker-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
-RUN #gradle build
-
+# Start service
 CMD ["java", "-jar", "app.jar"]

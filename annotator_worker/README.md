@@ -25,3 +25,6 @@ chmod +x local_setup.sh
 ```shell
  ./gradlew build && docker build -t annotation_worker_dev:latest .
 ```
+
+Change:
+- `PythonProcessRunner.java` `pangolin` for local development

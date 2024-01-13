@@ -4,7 +4,7 @@ import Navigation from '../Navigation';
 import { FaUserCircle } from 'react-icons/fa';
 
 const Main: React.FC = () => {
-  const allAlgorithms = ['PANGOLIN', 'Algorytm2', 'Algorytm3'];
+  const allAlgorithms = ['PANGOLIN', 'SPiP', 'Algorytm3'];
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(allAlgorithms);
   const [file, setFile] = useState<File | null>(null);
 

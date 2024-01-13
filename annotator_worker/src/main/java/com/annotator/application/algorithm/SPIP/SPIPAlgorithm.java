@@ -1,7 +1,8 @@
-package com.annotator.application.algorithm.pangolin;
+package com.annotator.application.algorithm.SPIP;
 
 import com.annotator.infra.CsvHandler;
-import com.annotator.infra.PythonProcessRunner;
+import com.annotator.infra.RProcessRunner;
+import com.annotator.infra.VcfHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -14,11 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class PangolinAlgorithm {
+public class SPIPAlgorithm {
     private static final Path INPUT_DIR = Paths.get(System.getProperty("user.dir"), "input");
 
-    private final PythonProcessRunner runner = new PythonProcessRunner();
-    private final CsvHandler csvHandler = new CsvHandler();
+    private final RProcessRunner runner = new RProcessRunner();
+    private final VcfHandler vcfHandler = new VcfHandler();
 
     private static Optional<String> getResult(final String path) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(path))) {
@@ -30,22 +31,22 @@ public class PangolinAlgorithm {
         }
     }
 
-    public Optional<String> handle(final List<PangolinInput> input) {
+    public Optional<String> handle(final List<SPIPInput> input) {
         return prepareInputFile(input)
                 .flatMap(this::runAlgorithm)
-                .flatMap(PangolinAlgorithm::getResult);
+                .flatMap(SPIPAlgorithm::getResult);
 
     }
 
     private Optional<String> runAlgorithm(final Path filePath) {
         final var fileName = filePath.getFileName().toString();
-        final var outputFile = fileName.substring(0, fileName.lastIndexOf('.')) + ".pangolin.txt";
-        return runner.runPangolinProcess(fileName, outputFile);
+        final var outputFile = fileName.substring(0, fileName.lastIndexOf('.')) + "spip.txt";
+        return runner.runSPIPProcess(fileName, outputFile);
     }
 
-    private Optional<Path> prepareInputFile(final List<PangolinInput> input) {
-        final var inputPath = Paths.get(INPUT_DIR.toString(), String.valueOf(input.hashCode() + ".csv"));
-        return csvHandler.saveBean(inputPath, new ArrayList<>(input));
+    private Optional<Path> prepareInputFile(final List<SPIPInput> input) {
+        final var inputPath = Paths.get(INPUT_DIR.toString(), input.hashCode() + ".vcf");
+        return vcfHandler.saveBean(inputPath, new ArrayList<>(input));
     }
 
 }
