@@ -1,0 +1,5 @@
+Pangolin:
+https://raw.githubusercontent.com/tkzeng/Pangolin/main/examples/brca.csv
+
+SPIP:
+https://raw.githubusercontent.com/LBGC-CFB/SPiP/master/testVar.vcf

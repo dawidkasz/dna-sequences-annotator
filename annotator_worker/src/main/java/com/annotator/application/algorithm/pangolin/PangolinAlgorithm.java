@@ -39,7 +39,7 @@ public class PangolinAlgorithm {
 
     private Optional<String> runAlgorithm(final Path filePath) {
         final var fileName = filePath.getFileName().toString();
-        final var outputFile = fileName.substring(0, fileName.lastIndexOf('.')) + ".pangolin.txt";
+        final var outputFile = fileName.substring(0, fileName.lastIndexOf('.')) + ".pangolin";
         return runner.runPangolinProcess(fileName, outputFile);
     }
 
