@@ -1,5 +1,7 @@
 package com.annotator.application;
 
+import com.annotator.application.algorithm.SPIP.SPIPAlgorithm;
+import com.annotator.application.algorithm.SPIP.SPIPInput;
 import com.annotator.application.algorithm.pangolin.PangolinAlgorithm;
 import com.annotator.application.algorithm.pangolin.PangolinInput;
 import com.annotator.domain.AnnotatedResult;
@@ -32,6 +34,9 @@ public class AnnotationHandler {
             case PANGOLIN -> {
                 return new PangolinAlgorithm().handle(List.of(PangolinInput.from(request)));
             }
+            case SPIP -> {
+                return new SPIPAlgorithm().handle(List.of(SPIPInput.from(request)));
+            }
         }
         return Optional.empty();
     }
@@ -49,6 +54,7 @@ public class AnnotationHandler {
     //TODO add buffer
     public void start() {
         final var sendRecords = consumer.getRequestStream()
+                // .buffer()
                 .flatMap(this::processRequest)
                 .map(this::getSenderRecord);
 
@@ -62,6 +68,7 @@ public class AnnotationHandler {
 
     private Mono<Tuple2<AnnotatedResult, ReceiverOffset>> processRequest(final ReceiverRecord<String, AnnotationRequest> r) {
         final var request = r.value();
+        // TODO: handle list
         return handle(request)
                 .map(result -> Mono.just(
                         Tuples.of(AnnotationHandler.toResult(request, result), r.receiverOffset()))

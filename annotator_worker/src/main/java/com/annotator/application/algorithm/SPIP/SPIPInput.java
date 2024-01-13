@@ -1,4 +1,4 @@
-package com.annotator.application.algorithm.pangolin;
+package com.annotator.application.algorithm.SPIP;
 
 import com.annotator.domain.AnnotationRequest;
 import com.annotator.infra.CsvBean;
@@ -12,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class PangolinInput extends CsvBean {
-    @CsvBindByName(column = "gene")
-    private String gene;
+public class SPIPInput extends CsvBean {
+    @CsvBindByName(column = "ID")
+    private String id;
 
-    @CsvBindByName(column = "CHROM")
+    @CsvBindByName(column = "#CHROM")
     private String chrom;
 
     @CsvBindByName(column = "POS")
@@ -28,9 +28,9 @@ public class PangolinInput extends CsvBean {
     @CsvBindByName(column = "ALT")
     private String alt;
 
-    public static PangolinInput from(final AnnotationRequest request) {
+    public static SPIPInput from(final AnnotationRequest request) {
         final var variant = request.getVariant();
-        return new PangolinInput(
+        return new SPIPInput(
                 variant.getGene(),
                 variant.getChromosome(),
                 variant.getPosition(),

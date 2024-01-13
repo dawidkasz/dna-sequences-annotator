@@ -19,7 +19,7 @@ import java.util.Properties;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KafkaConfig {
     public static Properties createConsumerProps() {
-        final String bootstrapServers = "localhost:29092";
+        final String bootstrapServers = "kafka:9092";
         final String groupId = "my-fourth-application";
         final Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -43,7 +43,7 @@ public class KafkaConfig {
     }
 
     public static Properties createProducerProps() {
-        final String bootstrapServers = "localhost:29092";
+        final String bootstrapServers = "kafka:9092";
         final Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

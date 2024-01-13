@@ -8,25 +8,26 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 @Slf4j
-public class PythonProcessRunner {
+public class RProcessRunner {
     private static final String PWD = System.getProperty("user.dir");
-//    private static final Path PYTHON_INT = Paths.get(PWD, "/venv/bin/pangolin"); //for local development
-    private static final Path PYTHON_INT = Paths.get("pangolin"); //for docker
+    private static final Path SPIP_INT = Paths.get(PWD, "SPiP");
     private static final Path DATA_DIR = Paths.get(PWD, "data");
-    private static final Path GENOME = Paths.get(DATA_DIR.toString(), "GRCh37.primary_assembly.genome.fa.gz");
-    private static final Path GENCODE = Paths.get(DATA_DIR.toString(), "gencode.v38lift37.annotation.db");
+    private static final Path TRANSCRIPT_SEQUENCES= Paths.get(DATA_DIR.toString(), "transcriptome_hg38.RData");
     private static final Path INPUT_DIR = Paths.get(PWD, "input");
     private static final Path OUTPUT_DIR = Paths.get(PWD, "output");
 
-    public Optional<String> runPangolinProcess(final String inputFile, final String outputFile) {
+    public Optional<String> runSPIPProcess(final String inputFile, final String outputFile) {
         final var outputPath = Paths.get(OUTPUT_DIR.toString(), outputFile).toString();
 
         final String[] command = {
-                PYTHON_INT.toString(),
+                "Rscript",
+                Paths.get(SPIP_INT.toString(), "SPiPv2.1_main.r").toString(),
+                "-I",
                 Paths.get(INPUT_DIR.toString(), inputFile).toString(),
-                GENOME.toString(),
-                GENCODE.toString(),
-                outputPath
+                "-O",
+                outputPath,
+                "--transcriptome",
+                TRANSCRIPT_SEQUENCES.toString()
         };
         log.info("Created a process with command: `{}`", String.join(" ", command));
         final ProcessBuilder pb = new ProcessBuilder(command);

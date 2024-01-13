@@ -15,20 +15,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class CsvHandler implements FileHandler {
+public class VcfHandler implements FileHandler {
     @Override
     public Optional<Path> saveBean(final Path path, final List<CsvBean> sampleData) {
 
         try (final Writer writer = new FileWriter(path.toString())) {
             final StatefulBeanToCsv<CsvBean> sbc = new StatefulBeanToCsvBuilder<CsvBean>(writer)
                     .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-//                    .withQuotechar('\'')
-                    .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
+                    .withSeparator('\t')
                     .build();
 
             sbc.write(sampleData);
         } catch (final IOException | CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
-            log.error("Error when saving csv file {}", e.getMessage());
+            log.error("Error when saving vcf file {}", e.getMessage());
             return Optional.empty();
         }
         return Optional.of(path);
