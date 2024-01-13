@@ -42,6 +42,6 @@ public class PythonProcessRunner {
             log.error("There was error when running pagolin algorithm {}", e.getMessage());
             return Optional.empty();
         }
-        return Optional.of(outputPath);
+        return Optional.of(outputPath + inputFile.substring(inputFile.lastIndexOf('.')));
     }
 }
