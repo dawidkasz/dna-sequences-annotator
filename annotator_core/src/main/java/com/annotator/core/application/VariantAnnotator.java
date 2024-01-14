@@ -1,10 +1,11 @@
 package com.annotator.core.application;
 
 import com.annotator.core.application.variantparser.VariantParser;
-import com.annotator.core.domain.annotation.*;
+import com.annotator.core.domain.annotation.AnnotationAlgorithm;
+import com.annotator.core.domain.annotation.Variant;
+import com.annotator.core.domain.annotation.VariantsAnnotationsRepository;
 import com.annotator.core.domain.order.OrderFactory;
 import com.annotator.core.domain.order.OrderId;
-import com.annotator.core.domain.order.OrderRepository;
 import com.annotator.core.domain.order.OrderService;
 import com.annotator.core.domain.order.result.AnnotationResult;
 import com.annotator.core.domain.order.result.AnnotationResultConsumer;
@@ -22,8 +23,6 @@ public class VariantAnnotator implements AnnotationResultConsumer {
     private final VariantParser parser;
     private final OrderService orderService;
     private final OrderFactory orderFactory;
-    private final OrderRepository orderRepository;
-    private final AnnotationService annotationService;
     private final VariantsAnnotationsRepository annotationsRepository;
 
     public OrderId annotate(final InputStream variantFileStream, final List<AnnotationAlgorithm> algorithms) {
@@ -34,10 +33,6 @@ public class VariantAnnotator implements AnnotationResultConsumer {
         orderService.handle(order);
 
         return order.getOrderId();
-    }
-
-    public List<VariantAnnotations> retrieveAnnotations(final OrderId orderId) {
-        return orderRepository.findOrderAnnotations(orderId);
     }
 
     @Override

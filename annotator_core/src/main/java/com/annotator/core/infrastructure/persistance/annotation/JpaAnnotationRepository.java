@@ -22,7 +22,7 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
                 .variant(JpaVariantDetails.from(annotation.variant()))
                 .results(results)
                 .annotationId(annotation.annotationId().uuid())
-                .state(!annotation.annotations().isEmpty())
+                .annotated(annotation.annotations().size() == AnnotationAlgorithm.values().length)
                 .build();
     }
 
@@ -30,6 +30,13 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
     @Override
     public boolean exists(final Variant variant) {
         return annotationRepository.existsById(JpaVariantDetails.from(variant));
+    }
+
+    @Override
+    public boolean isAnnotated(final Variant variant) {
+        return annotationRepository.findById(JpaVariantDetails.from(variant))
+                .map(JpaAnnotation::isAnnotated)
+                .orElse(false);
     }
 
     @Override
@@ -42,7 +49,7 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
                         result -> {
                             //TODO use native postgres hstack
                             annotation.annotations().forEach(x -> result.getResults().put(x.algorithm().name(), x.result()));
-                            result.setState(!result.getResults().isEmpty());
+                            result.setAnnotated(result.getResults().size() == AnnotationAlgorithm.values().length);
                             annotationRepository.save(result);
                         },
                         () -> {
@@ -60,7 +67,7 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
         annotationRepository.findByAnnotationId(result.annotationId().uuid())
                 .ifPresent(jpaAnnotation -> {
                     jpaAnnotation.getResults().put(result.algorithm().name(), result.result());
-                    jpaAnnotation.setState(true);
+                    jpaAnnotation.setAnnotated(jpaAnnotation.getResults().size() == AnnotationAlgorithm.values().length);
                     annotationRepository.save(jpaAnnotation);
                 });
     }
