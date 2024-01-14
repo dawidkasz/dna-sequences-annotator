@@ -36,7 +36,7 @@ public class JpaAnnotation {
     @Column(columnDefinition = "jsonb")
     private Map<String, String> results;
 
-    private boolean state;
+    private boolean annotated;
 
     public VariantAnnotations toAnnotation() {
         final var annotations = results.entrySet().stream().map(

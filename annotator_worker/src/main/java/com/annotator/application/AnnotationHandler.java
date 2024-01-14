@@ -55,6 +55,7 @@ public class AnnotationHandler {
     public void start() {
         final var sendRecords = consumer.getRequestStream()
                 // .buffer()
+                .filter(r -> r.value() != null)
                 .flatMap(this::processRequest)
                 .map(this::getSenderRecord);
 

@@ -56,25 +56,27 @@ services:
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
-##
-  core:
-    build: annotator_core
-    restart: always
-    depends_on:
-      - db
-      - kafka
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "8080:8080"
-#
+  #  core:
+  #    build: annotator_core
+  #    restart: always
+  #    depends_on:
+  #      - db
+  #      - kafka
+  #    environment:
+  #      SPRING_PROFILES_ACTIVE: docker
+  #      MAIL_HOST: plain
+  #      MAIL_USERNAME: plain
+  #      MAIL_PASSWORD: plain
+  #    ports:
+  #      - "8080:8080"
+  ##
   worker:
     build: annotator_worker
     restart: always
     depends_on:
       - kafka
-#    volumes:
-#      - ./data:/app/annotator_worker/data
+    #    volumes:
+    #      - ./data:/app/annotator_worker/data
     deploy:
       mode: replicated
       replicas: 1

@@ -1,4 +1,4 @@
-package com.annotator.core.infrastructure.dummy;
+package com.annotator.core.infrastructure.console;
 
 import com.annotator.core.domain.order.Order;
 import com.annotator.core.domain.order.OrderNotifier;
@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 public class ConsoleNotifier implements OrderNotifier {
     @Override
     public void notifyAbutOrderFinished(final Order order) {
-        log.warn("Order: {} has finished!", order.getOrderId());
+        log.info("Order: {} has finished!", order.getOrderId());
     }
 }

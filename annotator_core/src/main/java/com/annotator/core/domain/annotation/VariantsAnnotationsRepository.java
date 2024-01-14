@@ -7,6 +7,8 @@ import java.util.Optional;
 public interface VariantsAnnotationsRepository {
     boolean exists(Variant variant);
 
+    boolean isAnnotated(Variant variant);
+
     void save(VariantAnnotations annotations);
 
     void save(AnnotationResult result);

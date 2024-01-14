@@ -42,7 +42,7 @@ public class JpaOrderRepository implements OrderRepository {
 
     @Override
     public boolean notExists(final OrderPosition orderPosition) {
-        return annotationRepository.exists(orderPosition.variant());
+        return !annotationRepository.exists(orderPosition.variant());
     }
 
     @Override

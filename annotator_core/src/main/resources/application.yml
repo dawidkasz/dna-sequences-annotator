@@ -1,33 +1,44 @@
 spring:
+  mail:
+    host: # when mail enabled insert your smtp server address
+    port: 587
+    username: # when mail enabled insert mail
+    password: # when mail enabled insert password
+  notify:
+    webhook:
+      enabled: true
+      url: http://localhost:8000/webhook
+    mail:
+      enabled: false
+      receiver-mail: # when enabled insert mail
   kafka:
     annotation-request-topic: annotation-request
     annotation-result-topic: annotation-result
-#    bootstrap-servers: kafka:9092
     bootstrap-servers: localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       bootstrap-servers: localhost:29092
-#      bootstrap-servers: kafka:9092
     consumer:
       group-id: core-annotator
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.annotator.core.infrastructure.kafka.AnnotatedResultDeserializer
       bootstrap-servers: localhost:29092
-#      bootstrap-servers: kafka:9092
       group-instance-id: result-client #skips rebalancing - remove in prod
   datasource:
     driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://pzsp2-db-1:5432/annotator_db
     url: jdbc:postgresql://localhost:5432/annotator_db
     username: postgres
     password: postgres
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true
     defer-datasource-initialization: true
+logging:
+  level:
+    com.annotator.core.infrastructure.kafka: DEBUG

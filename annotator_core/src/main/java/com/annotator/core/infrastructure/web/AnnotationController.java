@@ -3,6 +3,7 @@ package com.annotator.core.infrastructure.web;
 import com.annotator.core.application.VariantAnnotator;
 import com.annotator.core.domain.annotation.AnnotationAlgorithm;
 import com.annotator.core.domain.order.OrderId;
+import com.annotator.core.domain.order.OrderRepository;
 import com.annotator.core.infrastructure.web.annotations.JSONAnnotation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @RequestMapping("/annotate")
 public class AnnotationController {
     private final VariantAnnotator variantProcessor;
+    private final OrderRepository orderRepository;
+
 
     @PostMapping("/csv")
     public ResponseEntity<OrderResponse> annotateCsvFile(
@@ -42,7 +45,7 @@ public class AnnotationController {
 
     @GetMapping("/results/{orderId}")
     public ResponseEntity<List<JSONAnnotation>> annotationsResults(@PathVariable final UUID orderId) {
-        final var results = variantProcessor.retrieveAnnotations(new OrderId(orderId));
+        final var results = orderRepository.findOrderAnnotations(new OrderId(orderId));
         return ResponseEntity.ok(results.stream().map(JSONAnnotation::from).toList());
     }
 

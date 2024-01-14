@@ -12,7 +12,7 @@ public class AnnotationService {
 
     public List<VariantAnnotations> createMissingAnnotations(final List<Variant> variants) {
         return variants.stream()
-                .filter(variant -> !annotationsRepository.exists(variant))
+                .filter(variant -> !annotationsRepository.isAnnotated(variant))
                 .map(this::createMissingAnnotation)
                 .toList();
     }

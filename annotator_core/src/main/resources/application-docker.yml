@@ -1,4 +1,9 @@
 spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
   kafka:
     annotation-request-topic: annotation-request
     annotation-result-topic: annotation-result

@@ -30,7 +30,6 @@ public class OrderService {
                 .map(algorithm -> AnnotationRequest.from(orderId, id, variant, algorithm));
     }
 
-    //TODO handle pending result
     public void handle(final Order order) {
         final var orderId = order.getOrderId();
         final var requests = annotationService.createMissingAnnotations(order.getVariants()).stream()

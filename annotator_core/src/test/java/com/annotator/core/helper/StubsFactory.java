@@ -27,8 +27,8 @@ public class StubsFactory {
     }
 
     public static List<VariantAnnotations> variantAnnotations() {
-        final var annotation1 = List.of(new Annotation(AnnotationAlgorithm.PANGOLIN, "test"), new Annotation(AnnotationAlgorithm.TEST, "test2"));
-        final var annotation2 = List.of(new Annotation(AnnotationAlgorithm.PANGOLIN, "test3"), new Annotation(AnnotationAlgorithm.TEST, "test4"));
+        final var annotation1 = List.of(new Annotation(AnnotationAlgorithm.PANGOLIN, "test"), new Annotation(AnnotationAlgorithm.SPIP, "test2"));
+        final var annotation2 = List.of(new Annotation(AnnotationAlgorithm.PANGOLIN, "test3"), new Annotation(AnnotationAlgorithm.SPIP, "test4"));
         return List.of(VariantAnnotations.from(variants().get(0), annotation1), VariantAnnotations.from(variants().get(1), annotation2));
     }
 
@@ -50,7 +50,7 @@ public class StubsFactory {
 
     public static List<Annotation> annotations() {
         return List.of(
-                new Annotation(AnnotationAlgorithm.TEST, "test"),
+                new Annotation(AnnotationAlgorithm.SPIP, "test"),
                 new Annotation(AnnotationAlgorithm.PANGOLIN, "test")
         );
     }
