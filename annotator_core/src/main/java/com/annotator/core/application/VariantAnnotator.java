@@ -27,7 +27,6 @@ public class VariantAnnotator implements AnnotationResultConsumer {
 
     public OrderId annotate(final InputStream variantFileStream, final List<AnnotationAlgorithm> algorithms) {
         final List<Variant> variants = parser.read(variantFileStream);
-
         final var order = orderFactory.createOrder(variants, algorithms);
 
         orderService.handle(order);

@@ -1,5 +1,7 @@
 package com.annotator.infra;
 
+import com.annotator.application.algorithm.pangolin.PangolinInput;
+import com.annotator.helper.AnnotationStrategy;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -23,6 +25,7 @@ public class CsvHandler implements FileHandler {
             final StatefulBeanToCsv<CsvBean> sbc = new StatefulBeanToCsvBuilder<CsvBean>(writer)
                     .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
 //                    .withQuotechar('\'')
+                    .withMappingStrategy(new AnnotationStrategy<>(PangolinInput.class))
                     .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
                     .build();
 

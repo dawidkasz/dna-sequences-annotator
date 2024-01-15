@@ -1,12 +1,25 @@
-import com.annotator.domain.AnnotationRequest;
+import com.annotator.application.algorithm.pangolin.PangolinInput;
+import com.annotator.infra.CsvHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class POCTest {
+    private static Flux<List<ExObj>> processBatch(final List<ExampleObject> objects) {
+        log.info("Batch: {}", objects);
+        return Flux.just(objects.stream()
+                .map(obj -> new ExObj(-obj.id))
+                .toList());
+    }
+
     @Test
     public void deser() throws IOException {
         final var messge = """
@@ -37,5 +50,36 @@ public class POCTest {
         final var result = 'a';
 //                mapper.readValue(data, AnnotationRequest.class);
         log.info("Res {}", result);
+    }
+
+    @Test
+    void shouldGroupFlux() {
+        Flux.interval(Duration.ofMillis(500))
+                .map(ExampleObject::new)
+                .groupBy(obj -> obj.id % 2)
+                .flatMap(group ->
+                        group.buffer(3) // Buffering in batches of 10
+                                .flatMap(POCTest::processBatch)
+                )
+                .subscribe(System.out::println);
+
+        try {
+            Thread.sleep(10000); // for example, wait 10 seconds
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Test
+    void shouldSaveFile() {
+        final CsvHandler handler = new CsvHandler();
+        handler.saveBean(Path.of("/home/mszawerd/test"), new ArrayList<>(List.of(new PangolinInput("a", "b", 1, "c", "d"))));
+    }
+
+    private record ExampleObject(long id) {
+    }
+
+    private record ExObj(long id) {
+
     }
 }

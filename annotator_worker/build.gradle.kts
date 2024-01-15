@@ -18,7 +18,7 @@ dependencies {
     implementation("io.projectreactor.kafka:reactor-kafka:1.3.22")
     implementation("com.google.guava:guava:32.1.3-jre")
     implementation("com.opencsv:opencsv:5.9")
-    
+
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 

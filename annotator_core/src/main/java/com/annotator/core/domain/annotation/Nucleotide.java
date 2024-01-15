@@ -10,9 +10,27 @@ public enum Nucleotide {
     C("C"),
     G("G"),
     T("T"),
-    BLANK(".");
+    BLANK("-");
 
     private final String value;
+
+    public static Nucleotide from(final String value) {
+        switch (value) {
+            case "A" -> {
+                return Nucleotide.A;
+            }
+            case "C" -> {
+                return Nucleotide.C;
+            }
+            case "G" -> {
+                return Nucleotide.G;
+            }
+            case "T" -> {
+                return Nucleotide.T;
+            }
+        }
+        return Nucleotide.BLANK;
+    }
 
     @Override
     public String toString() {
