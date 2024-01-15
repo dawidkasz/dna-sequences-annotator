@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   mail:
     host: # when mail enabled insert your smtp server address
     port: 587
@@ -34,7 +38,7 @@ spring:
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
     properties:
       dialect: org.hibernate.dialect.PostgreSQLDialect
     generate-ddl: true

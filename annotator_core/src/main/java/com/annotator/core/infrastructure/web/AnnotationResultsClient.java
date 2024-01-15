@@ -27,7 +27,7 @@ public class AnnotationResultsClient {
                 log.warn("There was error when sending webhook notification, HTTP: {}", response.getStatusCode());
             }
         } catch (final RestClientException e) {
-            log.warn("There was error when sending webhook notification", e);
+            log.warn("There was error when sending webhook notification: {}", e.getMessage());
         }
     }
 }

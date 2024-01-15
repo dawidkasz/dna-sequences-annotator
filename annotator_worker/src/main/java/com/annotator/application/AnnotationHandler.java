@@ -5,12 +5,14 @@ import com.annotator.application.algorithm.SPIP.SPIPInput;
 import com.annotator.application.algorithm.pangolin.PangolinAlgorithm;
 import com.annotator.application.algorithm.pangolin.PangolinInput;
 import com.annotator.domain.AnnotatedResult;
+import com.annotator.domain.AnnotationAlgorithm;
 import com.annotator.domain.AnnotationRequest;
 import com.annotator.kafka.KafkaRequestConsumer;
+import com.google.common.collect.Streams;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.ReceiverOffset;
 import reactor.kafka.receiver.ReceiverRecord;
 import reactor.kafka.sender.KafkaSender;
@@ -18,8 +20,9 @@ import reactor.kafka.sender.SenderRecord;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Slf4j
@@ -29,16 +32,16 @@ public class AnnotationHandler {
     private final KafkaSender<String, AnnotatedResult> producer;
     private final String resultTopic;
 
-    private static Optional<String> handle(final AnnotationRequest request) {
-        switch (request.getAlgorithm()) {
+    private static List<String> handle2(final AnnotationAlgorithm algorithm, final List<AnnotationRequest> requests) {
+        switch (algorithm) {
             case PANGOLIN -> {
-                return new PangolinAlgorithm().handle(List.of(PangolinInput.from(request)));
+                return new PangolinAlgorithm().handle(requests.stream().map(PangolinInput::from).toList());
             }
             case SPIP -> {
-                return new SPIPAlgorithm().handle(List.of(SPIPInput.from(request)));
+                return new SPIPAlgorithm().handle(requests.stream().map(SPIPInput::from).toList());
             }
         }
-        return Optional.empty();
+        return List.of();
     }
 
     private static AnnotatedResult toResult(final AnnotationRequest request, final String result) {
@@ -51,30 +54,30 @@ public class AnnotationHandler {
         );
     }
 
-    //TODO add buffer
     public void start() {
         final var sendRecords = consumer.getRequestStream()
-                // .buffer()
-                .filter(r -> r.value() != null)
-                .flatMap(this::processRequest)
+                .groupBy(record -> record.value().getAlgorithm())
+                .flatMap(group -> group.bufferTimeout(1, Duration.ofSeconds(10)).map(bufferedGroup -> processGroup(group.key(), bufferedGroup)))
+                .flatMap(Flux::fromStream)
                 .map(this::getSenderRecord);
 
         producer.send(sendRecords)
                 .doOnNext(r -> {
                     r.correlationMetadata().acknowledge();
-                    log.info("Sent {}", r.recordMetadata());
+                    log.debug("Sent {}", r.recordMetadata());
                 })
                 .subscribe();
     }
 
-    private Mono<Tuple2<AnnotatedResult, ReceiverOffset>> processRequest(final ReceiverRecord<String, AnnotationRequest> r) {
-        final var request = r.value();
-        // TODO: handle list
-        return handle(request)
-                .map(result -> Mono.just(
-                        Tuples.of(AnnotationHandler.toResult(request, result), r.receiverOffset()))
-                )
-                .orElse(Mono.empty());
+    private Stream<Tuple2<AnnotatedResult, ReceiverOffset>> processGroup(final AnnotationAlgorithm algorithm, final List<ReceiverRecord<String, AnnotationRequest>> records) {
+        final var requests = records.stream().map(ReceiverRecord::value).toList();
+        final var results = handle2(algorithm, requests);
+        if (requests.size() != results.size()) {
+            log.error("Size of results is different than requests, batch processing for {} failed", algorithm);
+            return Stream.empty();
+        }
+        return Streams.zip(records.stream(), results.stream(),
+                (record, result) -> Tuples.of(toResult(record.value(), result), record.receiverOffset()));
     }
 
     private SenderRecord<String, AnnotatedResult, ReceiverOffset> getSenderRecord(final Tuple2<AnnotatedResult, ReceiverOffset> receiverRecord) {

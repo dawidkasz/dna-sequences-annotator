@@ -1,8 +1,0 @@
-spring:
-  profiles:
-    docker:
-      kafka:
-        bootstrap-servers: kafka:9092
-    default:
-      kafka:
-        bootstrap-servers: localhost:29092

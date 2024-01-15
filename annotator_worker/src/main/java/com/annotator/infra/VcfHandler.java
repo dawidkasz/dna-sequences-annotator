@@ -1,5 +1,7 @@
 package com.annotator.infra;
 
+import com.annotator.application.algorithm.SPIP.SPIPInput;
+import com.annotator.helper.AnnotationStrategy;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
@@ -20,8 +22,9 @@ public class VcfHandler implements FileHandler {
     public Optional<Path> saveBean(final Path path, final List<CsvBean> sampleData) {
 
         try (final Writer writer = new FileWriter(path.toString())) {
-            final StatefulBeanToCsv<CsvBean> sbc = new StatefulBeanToCsvBuilder<CsvBean>(writer)
+            final StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder<CsvBean>(writer)
                     .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                    .withMappingStrategy(new AnnotationStrategy(SPIPInput.class))
                     .withSeparator('\t')
                     .build();
 

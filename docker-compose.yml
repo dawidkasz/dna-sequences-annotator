@@ -64,19 +64,15 @@ services:
   #      - kafka
   #    environment:
   #      SPRING_PROFILES_ACTIVE: docker
-  #      MAIL_HOST: plain
-  #      MAIL_USERNAME: plain
-  #      MAIL_PASSWORD: plain
   #    ports:
   #      - "8080:8080"
-  ##
   worker:
-    build: annotator_worker
+    build:
+      context: ./annotator_worker
+      dockerfile: Dockerfile.base
     restart: always
     depends_on:
       - kafka
-    #    volumes:
-    #      - ./data:/app/annotator_worker/data
     deploy:
       mode: replicated
       replicas: 1

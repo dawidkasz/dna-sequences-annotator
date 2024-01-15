@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @EqualsAndHashCode(callSuper = false)
 @Data
 @RequiredArgsConstructor
@@ -31,11 +34,17 @@ public class PangolinInput extends CsvBean {
     public static PangolinInput from(final AnnotationRequest request) {
         final var variant = request.getVariant();
         return new PangolinInput(
-                variant.getGene(),
+                "aaa",
                 variant.getChromosome(),
                 variant.getPosition(),
                 variant.getReferenceAllele(),
                 variant.getAlternativeAllele()
         );
+    }
+
+    public static List<PangolinInput> from(final List<AnnotationRequest> requests) {
+        return requests.stream()
+                .map(PangolinInput::from)
+                .collect(Collectors.toList());
     }
 }

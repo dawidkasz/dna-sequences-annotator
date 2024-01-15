@@ -27,7 +27,7 @@ public class Allele {
     public static Allele from(final String nucleotides) {
         final var parsedNucleotides = nucleotides.chars()
                 .mapToObj(c -> {
-                    if (c == '.') {
+                    if (c == '-') {
                         return Nucleotide.BLANK;
                     }
 

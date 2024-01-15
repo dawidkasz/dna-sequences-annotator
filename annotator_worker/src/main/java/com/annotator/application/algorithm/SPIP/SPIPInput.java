@@ -8,34 +8,31 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @EqualsAndHashCode(callSuper = false)
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class SPIPInput extends CsvBean {
-    @CsvBindByName(column = "ID")
+    @CsvBindByName(column = "gene")
     private String id;
 
-    @CsvBindByName(column = "#CHROM")
+    @CsvBindByName(column = "varID")
     private String chrom;
-
-    @CsvBindByName(column = "POS")
-    private long position;
-
-    @CsvBindByName(column = "REF")
-    private String ref;
-
-    @CsvBindByName(column = "ALT")
-    private String alt;
 
     public static SPIPInput from(final AnnotationRequest request) {
         final var variant = request.getVariant();
         return new SPIPInput(
-                variant.getGene(),
                 variant.getChromosome(),
-                variant.getPosition(),
-                variant.getReferenceAllele(),
-                variant.getAlternativeAllele()
+                variant.getGene().split(" ")[0]
         );
+    }
+
+    public static List<SPIPInput> from(final List<AnnotationRequest> requests) {
+        return requests.stream()
+                .map(SPIPInput::from)
+                .collect(Collectors.toList());
     }
 }
