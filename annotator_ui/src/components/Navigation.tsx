@@ -11,7 +11,7 @@ const Navigation: React.FC = () => {
     return (
         <div className="navigation">
             <button className='nav-link' onClick={() => handleNavigation('/adnotacje')}>Adnotacje</button>
-            <button className='nav-link' onClick={() => handleNavigation('/historia')}>Historia</button>
+            <button className='nav-link' onClick={() => handleNavigation('/wyniki')}>Wyniki</button>
         </div>
     );
 };
