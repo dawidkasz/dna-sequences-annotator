@@ -4,7 +4,7 @@ import Navigation from '../Navigation';
 import { FaUserCircle } from 'react-icons/fa';
 
 const Main: React.FC = () => {
-  const allAlgorithms = ['PANGOLIN', 'SPiP', 'Algorytm3'];
+  const allAlgorithms = ['PANGOLIN', 'SPiP', 'TEST'];
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(allAlgorithms);
   const [file, setFile] = useState<File | null>(null);
 
@@ -33,7 +33,7 @@ const Main: React.FC = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('algorithms', "PANGOLIN");
+      formData.append('algorithms', selectedAlgorithms[0]);
 
       try {
         const response = await fetch('http://localhost:8080/annotate/csv', {
