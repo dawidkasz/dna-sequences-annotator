@@ -114,7 +114,7 @@ const Main: React.FC = () => {
             </div>
 
             <p>
-              Po zakończeniu działania możesz przejść do zakładki <button className="blue-button">Historia</button> i pobrać pliki wynikowe z zaanotowanymi wariantami
+              Po zakończeniu działania możesz przejść do zakładki <button className="blue-button">Wyniki</button> i pobrać plik z zaanotowanymi wariantami
             </p>
           </div>
         </div>

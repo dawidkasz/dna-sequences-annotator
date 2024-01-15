@@ -179,3 +179,9 @@ code {
   cursor: pointer;
   border-radius: 4px;
 }
+
+.rounded-input {
+  border-radius: 12px;
+  margin: 10px 0;
+  padding: 8px;
+}
