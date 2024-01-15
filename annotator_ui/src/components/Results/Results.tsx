@@ -37,7 +37,7 @@ const Results: React.FC = () => {
               className="rounded-input"
             />
             <button className="green-button" onClick={handleFetchResults}>
-              Fetch Results
+              Akceptuj
             </button>
           </div>
           <div className="right-section">
