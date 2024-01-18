@@ -15,6 +15,9 @@ przeliczenie online wariantów typu INDEL.
 
 Prosty interfejs graficzny, który opcjonalnie może zostać wykorzystany do manualnego wgrywaniu wariantów do adnotacji.
 
+Wygląd UI:
+![](./docs/annotator_ui.png)
+
 ### annotator_core
 
 Główny komponent systemu udostępniający interfejs REST API.
