@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Repository
 @RequiredArgsConstructor
@@ -72,6 +73,16 @@ public class JpaOrderRepository implements OrderRepository {
                     }
                     return toDomain(jpaOrder, variants);
                 });
+    }
+
+    @Override
+    public List<AnnotatedOrder> findAll() {
+        return StreamSupport.stream(orderRepository.findAll().spliterator(), false)
+                .map(order -> new AnnotatedOrder(
+                        new OrderId(order.getOrderId()),
+                        findOrderAnnotations(new OrderId(order.getOrderId()))
+                ))
+                .toList();
     }
 
     @Override

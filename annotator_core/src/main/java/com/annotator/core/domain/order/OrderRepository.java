@@ -12,6 +12,8 @@ public interface OrderRepository {
 
     Optional<Order> find(OrderId orderId);
 
+    List<AnnotatedOrder> findAll();
+
     List<VariantAnnotations> findOrderAnnotations(OrderId orderId);
 
 }

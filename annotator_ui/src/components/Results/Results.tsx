@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import Navigation from '../Navigation';
 
+interface OrderResult {
+  orderId: string;
+  annotations: any[];
+}
+
 const Results: React.FC = () => {
   const [orderId, setOrderId] = useState('');
-  const [result, setResult] = useState('');
+  const [results, setResults] = useState<OrderResult[]>([]);
 
   const handleOrderIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setOrderId(event.target.value);
@@ -12,12 +17,44 @@ const Results: React.FC = () => {
   const handleFetchResults = async () => {
     try {
       const response = await fetch(`http://localhost:8080/annotate/results/${orderId}`);
-      const data = await response.json();
-      setResult(data);
+
+      if (response.ok) {
+        const data: OrderResult = await response.json();
+        console.log("Response: ", data);
+        setResults([data]);
+      } else {
+        setResults([]);
+      }
     } catch (error) {
       console.error('Error fetching results:', error);
+      setResults([]);
     }
   };
+
+  const handleFetchAllResults = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/annotate/results/list`);
+
+      if (response.ok) {
+        const data: OrderResult[] = await response.json();
+        console.log("Response: ", data);
+        setResults(data);
+      } else {
+        setResults([]);
+      }
+    } catch (error) {
+      console.error('Error fetching results:', error);
+      setResults([]);
+    }
+  }
+
+  const buildFileDownloadUrl = (data: any) => {
+    return `data:text/plain;base64,${btoa(JSON.stringify(data))}`;
+  }
+
+  const buildFileDownloadName = (orderId: string) => {
+    return `${orderId}.json`;
+  }
 
   return (
     <div>
@@ -36,17 +73,32 @@ const Results: React.FC = () => {
               placeholder="Enter Order ID"
               className="rounded-input"
             />
-            <button className="green-button" onClick={handleFetchResults}>
-              Akceptuj
+            <button className="green-button" onClick={() => {
+              if (orderId === "") {
+                handleFetchAllResults()
+              } else {
+                handleFetchResults();
+              }
+            }}>
+              Szukaj
             </button>
           </div>
           <div className="right-section">
-            {result && (
-              <div>
-                <h2>Results:</h2>
-                <p>{result}</p>
-              </div>
-            )}
+            {
+              (results.length > 0) ? results.map(result =>
+                <div>
+                  <div>Identyfikator: <b>{result.orderId}</b></div>
+                  <div style={{marginTop: "8px"}}>
+                    <a
+                        download={buildFileDownloadName(result.orderId)}
+                        href={buildFileDownloadUrl(result.annotations)}
+                    >
+                    Pobierz
+                    </a>
+                  </div>
+                </div>
+              ) : "Brak wyników"
+            }
           </div>
         </div>
       </div>

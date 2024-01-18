@@ -3,10 +3,16 @@ import { Checkbox } from '../Checkbox';
 import Navigation from '../Navigation';
 import { FaUserCircle } from 'react-icons/fa';
 
+interface AnnotationRequestResponse {
+  annotationId: string;
+}
+
 const Main: React.FC = () => {
   const allAlgorithms = ['PANGOLIN', 'SPiP', 'TEST'];
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(allAlgorithms);
   const [file, setFile] = useState<File | null>(null);
+  const [message, setMessage] = useState("");
+  const [messageSeverity, setMessageSeverity] = useState<"info" | "error">("info");
 
   const csvData = [
     { GENE: 'BRCA1', '#CHROM': 17, POS: 41276135, REF: 'T', ALT: 'G' },
@@ -42,12 +48,16 @@ const Main: React.FC = () => {
         });
 
         if (response.ok) {
-          const data = await response.json();
+          const data: AnnotationRequestResponse = await response.json();
           console.log('Success:', data);
+          setMessage(`Żądanie zostało wysłane. Identyfikator: ${data.annotationId}`)
+          setMessageSeverity("info");
         } else {
           console.error('Error:', response.statusText);
         }
       } catch (error) {
+        setMessage("Wystąpił błąd. Spróbuj ponownie.")
+        setMessageSeverity("error");
         console.error('Error:', error);
       }
     }
@@ -68,6 +78,10 @@ const Main: React.FC = () => {
             </label>
 
             <button className="green-button" onClick={handleUpload}>Adnotuj</button>
+
+            <p className={messageSeverity === "info" ? "msg-info" : "msg-error"}>
+              {message}
+            </p>
 
             <div className='checkbox-container'>
               {allAlgorithms.map((algorithm) => (
