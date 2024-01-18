@@ -5,7 +5,7 @@ WORKDIR /app/annotator_worker
 COPY . .
 
 # Build the Java application using Gradle
-#RUN ./gradlew build
+RUN ./gradlew build
 
 # Start service
 CMD ["java", "-jar", "build/libs/annotator_worker-0.0.1-SNAPSHOT.jar"]
