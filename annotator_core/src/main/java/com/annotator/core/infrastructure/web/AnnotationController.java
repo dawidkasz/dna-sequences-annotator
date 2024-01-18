@@ -2,6 +2,7 @@ package com.annotator.core.infrastructure.web;
 
 import com.annotator.core.application.VariantAnnotator;
 import com.annotator.core.domain.annotation.AnnotationAlgorithm;
+import com.annotator.core.domain.order.Order;
 import com.annotator.core.domain.order.OrderId;
 import com.annotator.core.domain.order.OrderRepository;
 import com.annotator.core.infrastructure.web.annotations.JSONAnnotation;
@@ -44,13 +45,34 @@ public class AnnotationController {
     }
 
     @GetMapping("/results/{orderId}")
-    public ResponseEntity<List<JSONAnnotation>> annotationsResults(@PathVariable final UUID orderId) {
-        final var results = orderRepository.findOrderAnnotations(new OrderId(orderId));
-        return ResponseEntity.ok(results.stream().map(JSONAnnotation::from).toList());
+    public ResponseEntity<OrderResultResponse> annotationsResults(@PathVariable final UUID orderId) {
+        final var id = new OrderId(orderId);
+        if (orderRepository.find(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        final var annotations = orderRepository.findOrderAnnotations(id);
+        final var result = new OrderResultResponse(id.getId(), annotations.stream().map(JSONAnnotation::from).toList());
+
+        return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/results/list")
+    public List<OrderResultResponse> listAnnotationResults() {
+        System.out.println("aaa");
+        return orderRepository.findAll().stream()
+                .map(o -> new OrderResultResponse(
+                        o.orderId().getId(),
+                        o.annotations().stream().map(JSONAnnotation::from).toList()
+                ))
+                .sorted()
+                .toList();
+    }
 
-    private record OrderResponse(String annotationId) {
+    public record OrderResponse(String annotationId) {
+    }
+
+    public record OrderResultResponse(String orderId, List<JSONAnnotation> annotations){
     }
 
 }

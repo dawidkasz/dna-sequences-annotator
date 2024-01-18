@@ -185,3 +185,11 @@ code {
   margin: 10px 0;
   padding: 8px;
 }
+
+.msg-info {
+  color: #3568a5;
+}
+
+.msg-error {
+  color: #FF0000
+}
