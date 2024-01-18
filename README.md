@@ -20,11 +20,11 @@ Prosty interfejs graficzny, który opcjonalnie może zostać wykorzystany do man
 Główny komponent systemu udostępniający interfejs REST API.
 
 Diagram klas
-[](./docs/annotator_core.png)
+![](./docs/annotator_core.png)
 
 ### annotator_worker
 
 Komponent systemu odpowiadający za efektywne przetwarzania danych genetycznych i wykonywanie algorytmów adnotacji sekwencji DNA.
 
 Diagram klas
-[](./docs/annotator_worker.png)
+![](./docs/annotator_worker.png)
