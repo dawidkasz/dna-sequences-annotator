@@ -1,9 +1,16 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
   mail:
     host: ${MAIL_HOST}
     port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
+  notify:
+    mail:
+      enabled: false
   kafka:
     annotation-request-topic: annotation-request
     annotation-result-topic: annotation-result
