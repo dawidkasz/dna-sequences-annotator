@@ -51,11 +51,6 @@ public class JpaOrderRepository implements OrderRepository {
     public void save(final Order order) {
         final var jpaVariants = order.getVariants().stream().map(JpaVariantDetails::from).toList();
         final var variantsIds = variantRepository.findAllIds(jpaVariants);
-
-        if (variantsIds.size() != order.getVariants().size()) {
-            throw new IllegalStateException("Cannot save order - not all variants are present in database");
-        }
-
         orderRepository.save(toJpa(order, variantsIds));
     }
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,9 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
     }
 
     @Override
-    public boolean isAnnotated(final Variant variant) {
+    public boolean isAnnotated(final Variant variant, final List<AnnotationAlgorithm> algorithms) {
         return annotationRepository.findById(JpaVariantDetails.from(variant))
-                .map(JpaAnnotation::isAnnotated)
+                .map(jpaAnnotation -> jpaAnnotation.isAnnotated(algorithms))
                 .orElse(false);
     }
 
@@ -52,13 +53,17 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
                             result.setAnnotated(result.getResults().size() == AnnotationAlgorithm.values().length);
                             annotationRepository.save(result);
                         },
-                        () -> {
-                            final var variantId = variantRepository.findIdOrCreate(jpaAnnotation.getVariant());
-                            jpaAnnotation.setVariantId(variantId);
-                            annotationRepository.save(jpaAnnotation);
-                        });
+                        () -> createAnnotationWithVariant(jpaAnnotation)
+                );
 
 
+    }
+
+    private JpaAnnotation createAnnotationWithVariant(final JpaAnnotation jpaAnnotation) {
+        final var variantId = variantRepository.findIdOrCreate(jpaAnnotation.getVariant());
+        jpaAnnotation.setVariantId(variantId);
+        jpaAnnotation.setAnnotated(false);
+        return annotationRepository.save(jpaAnnotation);
     }
 
     @Override
@@ -80,6 +85,24 @@ public class JpaAnnotationRepository implements VariantsAnnotationsRepository {
     @Override
     public Optional<VariantAnnotations> findByVariant(final Variant variant) {
         return annotationRepository.findById(JpaVariantDetails.from(variant)).map(JpaAnnotation::toAnnotation);
+    }
+
+    @Override
+    public List<VariantAnnotations> findWithMissingAlgorithms(final List<Variant> variants, final List<AnnotationAlgorithm> algorithms) {
+        return variants.stream()
+                .map(JpaVariantDetails::from)
+                .map(variant -> annotationRepository
+                        .findById(variant)
+                        .orElseGet(() -> createAnnotationWithVariant(JpaAnnotation.builder()
+                                .annotationId(AnnotationId.nextIdentity().uuid())
+                                .variant(variant)
+                                .annotated(false)
+                                .results(Map.of())
+                                .build()))
+                )
+                .filter(jpaAnnotation -> !jpaAnnotation.isAnnotated(algorithms))
+                .map(JpaAnnotation::toAnnotation)
+                .toList();
     }
 
     public List<JpaAnnotation> findAllByVariantsId(final List<Long> variantIds) {
