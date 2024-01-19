@@ -57,7 +57,7 @@ class OrderServiceTest {
     public void shouldSaveOrderAndPublishRequests_whenOrderNotFinished() {
         //given
         final var annotations = StubsFactory.variantAnnotations().subList(0, 2);
-        when(annotationService.createMissingAnnotations(any())).thenReturn(annotations);
+        when(annotationService.createMissingAnnotations(any(), any())).thenReturn(annotations);
 
         //when
         service.handle(order);

@@ -36,7 +36,7 @@ public class VariantAnnotator implements AnnotationResultConsumer {
 
     @Override
     public void consume(final AnnotationResult result) {
-        log.info("Processed {}", result);
+        log.info("Processed {}", result.annotationRequestId());
         annotationsRepository.save(result);
         orderService.updateOrderWithResult(result);
     }

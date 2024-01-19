@@ -10,11 +10,8 @@ import java.util.List;
 public class AnnotationService {
     private final VariantsAnnotationsRepository annotationsRepository;
 
-    public List<VariantAnnotations> createMissingAnnotations(final List<Variant> variants) {
-        return variants.stream()
-                .filter(variant -> !annotationsRepository.isAnnotated(variant))
-                .map(this::createMissingAnnotation)
-                .toList();
+    public List<VariantAnnotations> createMissingAnnotations(final List<Variant> variants, final List<AnnotationAlgorithm> algorithms) {
+        return annotationsRepository.findWithMissingAlgorithms(variants, algorithms);
     }
 
     private VariantAnnotations createMissingAnnotation(final Variant variant) {

@@ -13,8 +13,10 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "annotations")
@@ -43,6 +45,13 @@ public class JpaAnnotation {
                 entry -> new Annotation(AnnotationAlgorithm.valueOf(entry.getKey()), entry.getValue())
         ).toList();
         return new VariantAnnotations(new AnnotationId(annotationId), variant.toVariant(), annotations);
+    }
+
+    public boolean isAnnotated(final List<AnnotationAlgorithm> algorithm) {
+
+        return results.keySet()
+                .containsAll(algorithm.stream().map(AnnotationAlgorithm::name)
+                        .collect(Collectors.toSet()));
     }
 
 }

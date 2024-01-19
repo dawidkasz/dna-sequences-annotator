@@ -57,7 +57,7 @@ public class AnnotationHandler {
     public void start() {
         final var sendRecords = consumer.getRequestStream()
                 .groupBy(record -> record.value().getAlgorithm())
-                .flatMap(group -> group.bufferTimeout(1, Duration.ofSeconds(10)).map(bufferedGroup -> processGroup(group.key(), bufferedGroup)))
+                .flatMap(group -> group.bufferTimeout(200, Duration.ofSeconds(10)).map(bufferedGroup -> processGroup(group.key(), bufferedGroup)))
                 .flatMap(Flux::fromStream)
                 .map(this::getSenderRecord);
 
@@ -70,6 +70,7 @@ public class AnnotationHandler {
     }
 
     private Stream<Tuple2<AnnotatedResult, ReceiverOffset>> processGroup(final AnnotationAlgorithm algorithm, final List<ReceiverRecord<String, AnnotationRequest>> records) {
+        log.info("Group size {}", records.size());
         final var requests = records.stream().map(ReceiverRecord::value).toList();
         final var results = handle2(algorithm, requests);
         if (requests.size() != results.size()) {

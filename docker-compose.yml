@@ -49,7 +49,7 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
               kafka-topics --bootstrap-server kafka:9092 --list && \
-              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 1 && \
+              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 4 && \
               kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-result --replication-factor 1 --partitions 1 && \
               echo -e 'Successfully created the following topics:' && \
               kafka-topics --bootstrap-server kafka:9092 --list'"
@@ -63,13 +63,16 @@ services:
       - db
       - kafka
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      - SPRING_PROFILES_ACTIVE=docker
+      - MAIL_HOST=tets
+      - MAIL_USERNAME=test
+      - MAIL_PASSWORD=test
     ports:
       - "8080:8080"
   worker:
     build:
       context: ./annotator_worker
-      dockerfile: Dockerfile.app
+      dockerfile: Dockerfile.base
     restart: always
     depends_on:
       - kafka

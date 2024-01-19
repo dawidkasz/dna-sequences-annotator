@@ -10,7 +10,7 @@ spring:
     password: # when mail enabled insert password
   notify:
     webhook:
-      enabled: true
+      enabled: false
       url: http://localhost:8000/webhook
     mail:
       enabled: false

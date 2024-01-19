@@ -26,7 +26,7 @@ public class KafkaConfig {
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, AnnotationRequestDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, "test-1");
+//        properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, "test-1");
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //        properties.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "test-1");
         return properties;
@@ -48,7 +48,7 @@ public class KafkaConfig {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AnnotatedResultSerializer.class.getName());
-        properties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, "producer-1");
+//        properties.setProperty(ProducerConfig.CLIENT_ID_CONFIG, "producer-1");
 
         return properties;
     }
