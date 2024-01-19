@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,9 +30,11 @@ public class AnnotationController {
     @PostMapping("/csv")
     public ResponseEntity<OrderResponse> annotateCsvFile(
             @RequestParam("file") final MultipartFile file,
-            @RequestParam(value = "algorithms", defaultValue = "PANGOLIN") final String algorithmParam
+            @RequestParam(value = "algorithms", defaultValue = "PANGOLIN") final List<String> algorithmParams
     ) {
-        final List<AnnotationAlgorithm> algorithms = Collections.singletonList(AnnotationAlgorithm.valueOf(algorithmParam));
+        final List<AnnotationAlgorithm> algorithms = algorithmParams.stream()
+                .map(AnnotationAlgorithm::valueOf)
+                .collect(Collectors.toList());
 
         log.info("Annotation variants using {} algorithms", algorithms);
 
