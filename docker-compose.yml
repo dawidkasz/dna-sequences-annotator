@@ -19,6 +19,9 @@ services:
     volumes:
       - ./docker/init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - kafka_network
+
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -27,6 +30,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    networks:
+      - kafka_network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -41,6 +46,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - kafka_network
   kafka-setup:
     image: confluentinc/cp-kafka:latest
     hostname: kafka-setup
@@ -49,13 +56,16 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
               kafka-topics --bootstrap-server kafka:9092 --list && \
-              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 4 && \
+              kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-request --replication-factor 1 --partitions 10 && \
+              kafka-topics --bootstrap-server kafka:9092 --alter --topic annotation-request --partitions 10 && \
               kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic annotation-result --replication-factor 1 --partitions 1 && \
               echo -e 'Successfully created the following topics:' && \
               kafka-topics --bootstrap-server kafka:9092 --list'"
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+    networks:
+      - kafka_network
   core:
     build: annotator_core
     restart: always
@@ -69,15 +79,10 @@ services:
       - MAIL_PASSWORD=test
     ports:
       - "8080:8080"
-  worker:
-    build:
-      context: ./annotator_worker
-      dockerfile: Dockerfile.base
-    restart: always
-    depends_on:
-      - kafka
-    deploy:
-      mode: replicated
-      replicas: 1
+    networks:
+      - kafka_network
 volumes:
   postgres-data:
+networks:
+  kafka_network:
+    driver: bridge

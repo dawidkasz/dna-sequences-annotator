@@ -39,6 +39,7 @@ public class RProcessRunner {
                 log.error("Annotation process finished with error({})", exitCode);
                 return Optional.empty();
             }
+            log.info("Annotation process finished OK");
         } catch (final IOException | InterruptedException e) {
             log.error("There was error when running pagolin algorithm {}", e.getMessage());
             return Optional.empty();

@@ -52,9 +52,3 @@ COPY ./data/ ./data/
 
 # Create directories for input and output
 RUN mkdir input && mkdir output
-RUN gradle build
-ARG JAR_FILE=build/libs/annotator_worker-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} app.jar
-
-# Start service
-CMD ["java", "-jar", "app.jar"]
