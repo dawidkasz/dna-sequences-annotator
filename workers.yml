@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  worker:
+    build:
+      context: ./annotator_worker
+      dockerfile: Dockerfile.app
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - pzsp2_kafka_network
+networks:
+  pzsp2_kafka_network:
+    external: True

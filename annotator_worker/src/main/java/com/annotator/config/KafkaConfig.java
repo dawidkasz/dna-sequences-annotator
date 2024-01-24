@@ -15,19 +15,22 @@ import reactor.kafka.sender.SenderOptions;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class KafkaConfig {
     public static Properties createConsumerProps() {
         final String bootstrapServers = "kafka:9092";
-        final String groupId = "workers";
+        final String groupId = "annotator-workers";
         final Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, AnnotationRequestDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-//        properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, "test-1");
+        // properties.setProperty(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+       properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        // properties.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, "org.apache.kafka.clients.consumer.RoundRobinAssignor");
 //        properties.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "test-1");
         return properties;
     }

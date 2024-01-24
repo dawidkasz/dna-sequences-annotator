@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from '../Navigation';
 
 interface OrderResult {
@@ -33,7 +33,7 @@ const Results: React.FC = () => {
 
   const handleFetchAllResults = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/annotate/results/list`);
+      const response = await fetch(`http://localhost:8080/annotate/results`);
 
       if (response.ok) {
         const data: OrderResult[] = await response.json();
@@ -55,6 +55,10 @@ const Results: React.FC = () => {
   const buildFileDownloadName = (orderId: string) => {
     return `${orderId}.json`;
   }
+
+  useEffect(() => {
+    handleFetchAllResults();
+  }, []);
 
   return (
     <div>

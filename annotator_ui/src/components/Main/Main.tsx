@@ -8,7 +8,7 @@ interface AnnotationRequestResponse {
 }
 
 const Main: React.FC = () => {
-  const allAlgorithms = ['PANGOLIN', 'SPiP', 'TEST'];
+  const allAlgorithms = ['PANGOLIN', 'SPiP'];
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<string[]>(allAlgorithms);
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
@@ -39,7 +39,9 @@ const Main: React.FC = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('algorithms', selectedAlgorithms[0]);
+      selectedAlgorithms.forEach(algorithm => {
+        formData.append('algorithms', algorithm.toUpperCase());
+      });
 
       try {
         const response = await fetch('http://localhost:8080/annotate/csv', {

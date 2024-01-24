@@ -30,7 +30,7 @@ public class OrderService {
         final var id = newAnnotation.annotationId();
         final var variant = newAnnotation.variant();
         final var presentAlgorithms = newAnnotation.annotations().stream().map(Annotation::algorithm).collect(Collectors.toSet());
-        return Stream.of(AnnotationAlgorithm.SPIP)
+        return algorithms.stream()
                 .filter(algorithm -> !presentAlgorithms.contains(algorithm))
                 .map(algorithm -> AnnotationRequest.from(orderId, id, variant, algorithm));
     }

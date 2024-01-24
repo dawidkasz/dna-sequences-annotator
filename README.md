@@ -15,10 +15,19 @@ przeliczenie online wariantów typu INDEL.
 
 Prosty interfejs graficzny, który opcjonalnie może zostać wykorzystany do manualnego wgrywaniu wariantów do adnotacji.
 
+Wygląd UI:
+![](./docs/annotator_ui.png)
+
 ### annotator_core
 
 Główny komponent systemu udostępniający interfejs REST API.
 
+Diagram klas
+![](./docs/annotator_core.png)
+
 ### annotator_worker
 
 Komponent systemu odpowiadający za efektywne przetwarzania danych genetycznych i wykonywanie algorytmów adnotacji sekwencji DNA.
+
+Diagram klas
+![](./docs/annotator_worker.png)

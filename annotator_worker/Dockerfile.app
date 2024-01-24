@@ -1,4 +1,4 @@
-FROM percival33/pzsp2-worker:1.0.0
+FROM pzsp2-worker-base:latest
 WORKDIR /app/annotator_worker
 
 # Copy the Java application source
