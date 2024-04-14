@@ -1,33 +1,38 @@
-# System do adnotacji sekwencji DNA
+# DNA Sequences Annotator
 
 ## Cel projektu
 
-Celem projektu jest stworzenie platformy do wspomagania adnotacji
-wariantów splicingowych, która pozwoli na efektywne przetwarzanie i analizę
-wariantów genetycznych, zwłaszcza tych, które potencjalnie zaburzają proces
-splicingu. System ma być w stanie przetwarzać warianty typu SNV
-dla całego genomu, korzystając z kilku wybranych algorytmów, oraz umożliwiać
-przeliczenie online wariantów typu INDEL.
+The aim of the project is to create a platform to support the annotation of splicing variants, 
+which will allow for efficient processing and analysis of genetic variants, especially those that
+potentially disrupt the splicing process. 
+The system is capable of processing SNV type variants for the entire genome, 
+using several selected algorithms, and enable online recalculating of INDEL type variants.
 
-## Komponenty systemu
+One of the key assumptions of this system design is a possibility of an easy integration with existing DNA processing pipelines.
+
+## System architecture
 
 ### annotator_ui
 
-Prosty interfejs graficzny, który opcjonalnie może zostać wykorzystany do manualnego wgrywaniu wariantów do adnotacji.
+A simple graphical interface created in **ReactJS**, which can be used for manual uploading of variants for annotation.
 
-Wygląd UI:
 ![](./docs/annotator_ui.png)
 
 ### annotator_core
 
-Główny komponent systemu udostępniający interfejs REST API.
+Contains modules responsible for:
+- Handling domain logic
+- Providing a REST API interface for DNA sequences processing
+- Handling asynchronous communication with workers using **Apache Kafka**
+- Storing algorithms results in a persistent database - **PostgreSQL**
+- Sending notifications (e.g. email or webhook) when DNA sequences processing is finished
 
-Diagram klas
-![](./docs/annotator_core.png)
+The main component of the system handling the domain logic, which provides a REST API interface.
 
 ### annotator_worker
 
-Komponent systemu odpowiadający za efektywne przetwarzania danych genetycznych i wykonywanie algorytmów adnotacji sekwencji DNA.
+Responsible for efficient processing of genetic data and running DNA sequence annotation algorithms.
 
-Diagram klas
-![](./docs/annotator_worker.png)
+### Apache kafka
+
+Stands between the core 
