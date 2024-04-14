@@ -1,7 +1,5 @@
 # DNA Sequences Annotator
 
-## Cel projektu
-
 The aim of the project is to create a platform to support the annotation of splicing variants, 
 which will allow for efficient processing and analysis of genetic variants, especially those that
 potentially disrupt the splicing process. 
